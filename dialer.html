@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone Dialer</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: white;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top header for the back button */
+    .header {
+      padding-top: 50px;
+      padding-bottom: 15px;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 15px;
+      color: #007aff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* The screen where the typed numbers appear */
+    #number-display {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 40px;
+      font-weight: 300;
+      letter-spacing: 2px;
+      color: #333;
+      padding: 20px;
+      text-align: center;
+      word-break: break-all;
+    }
+
+    /* CSS Grid to lay out our circular number buttons */
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 columns */
+      gap: 20px 30px; /* Space between buttons */
+      padding: 20px 40px;
+      padding-bottom: 10px;
+      justify-items: center;
+    }
+
+    /* Standard dialer button styling */
+    .dial-btn {
+      width: 75px;
+      height: 75px;
+      background-color: #e5e5ea;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 32px;
+      color: black;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.1s;
+    }
+
+    .dial-btn:active {
+      background-color: #c7c7cc; /* Darkens when tapped */
+    }
+
+    /* The letters underneath the numbers (like classic phones) */
+    .sub-text {
+      font-size: 10px;
+      font-weight: bold;
+      color: #666;
+      margin-top: -5px;
+      letter-spacing: 1px;
+    }
+
+    /* The bottom row for Call and Backspace buttons */
+    .action-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 10px 40px;
+      padding-bottom: 50px; /* Room for home bar */
+      justify-items: center;
+      align-items: center;
+    }
+
+    /* Big green call button */
+    .call-btn {
+      width: 75px;
+      height: 75px;
+      background-color: #34c759;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 35px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(52, 199, 89, 0.4);
+    }
+
+    .call-btn:active {
+      background-color: #2eb050;
+    }
+
+    /* Delete button */
+    .delete-btn {
+      font-size: 24px;
+      color: #8e8e93;
+      cursor: pointer;
+      padding: 20px; /* Make it easy to tap */
+    }
+
+    .delete-btn:active {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
+  </div>
+
+  <div id="number-display"></div>
+
+  <div class="keypad">
+    <div class="dial-btn" onclick="addNumber('1')">
+      1<div class="sub-text">&nbsp;</div>
+    </div>
+    <div class="dial-btn" onclick="addNumber('2')">
+      2<div class="sub-text">ABC</div>
+    </div>
+    <div class="dial-btn" onclick="addNumber('3')">
+      3<div class="sub-text">DEF</div>
+    </div>
+    <div class="dial-btn" onclick="addNumber('4')">
+      4<div class="sub-text">GHI</div>
+    </div>
+    <div class="dial-btn" onclick="addNumber('5')">
+      5<div class="sub-text">JKL</div>
+    </div>
+    <div class="dial-btn" onclick="addNumber('6')">
+      6<div class="sub-text">MNO</div>
+    </div>
+    <div class="dial-btn" onclick="addNumber('7')">
+      7<div class="sub-text">PQRS</div>
+    </div>
+    <div class="dial-btn" onclick="addNumber('8')">
+      8<div class="sub-text">TUV</div>
+    </div>
+    <div class="dial-btn" onclick="addNumber('9')">
+      9<div class="sub-text">WXYZ</div>
+    </div>
+    <div class="dial-btn" onclick="addNumber('*')">
+      *<div class="sub-text">&nbsp;</div>
+    </div>
+    <div class="dial-btn" onclick="addNumber('0')">
+      0<div class="sub-text">+</div>
+    </div>
+    <div class="dial-btn" onclick="addNumber('#')">
+      #<div class="sub-text">&nbsp;</div>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <div></div> <div class="call-btn" onclick="makeCall()">📞</div>
+    
+    <div class="delete-btn" onclick="deleteNumber()">⌫</div>
+  </div>
+
+  <script>
+    // --- JAVASCRIPT: The Dialer Brain ---
+    
+    const display = document.getElementById('number-display');
+    let currentNumber = "";
+
+    // Adds a number to the screen when a button is tapped
+    function addNumber(num) {
+      currentNumber += num;
+      display.innerText = currentNumber;
+    }
+
+    // Deletes the very last number you typed (Backspace)
+    function deleteNumber() {
+      // .slice(0, -1) chops off the last character of the string
+      currentNumber = currentNumber.slice(0, -1);
+      display.innerText = currentNumber;
+    }
+
+    // Fakes making a phone call
+    function makeCall() {
+      if (currentNumber === "") {
+        alert("Please enter a number first!");
+      } else {
+        alert("Calling " + currentNumber + "...\n(This is a simulated call! 😸)");
+      }
+    }
+  </script>
+
+</body>
+</html>
