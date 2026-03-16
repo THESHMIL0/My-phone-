@@ -40,6 +40,7 @@
       position: relative;
     }
 
+    /* The camera notch at the top */
     .notch {
       width: 150px;
       height: 30px;
@@ -52,6 +53,7 @@
       z-index: 60; /* Higher z-index so it stays above open apps */
     }
 
+    /* The time and battery icons */
     .status-bar {
       display: flex;
       justify-content: space-between;
@@ -63,6 +65,7 @@
       z-index: 60; /* Keeps clock visible above apps */
     }
 
+    /* The grid holding our apps */
     .app-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr); 
@@ -70,6 +73,7 @@
       padding: 40px 20px;
     }
 
+    /* Individual app styling */
     .app-container {
       display: flex;
       flex-direction: column;
@@ -155,11 +159,11 @@
         <div class="app-name">Messages</div>
       </div>
       <div class="app-container">
-        <div class="app-icon" onclick="alert('Camera not built yet!')">📸</div>
+        <div class="app-icon" onclick="openApp('camera.html')">📸</div>
         <div class="app-name">Camera</div>
       </div>
       <div class="app-container">
-        <div class="app-icon" onclick="alert('Browser not built yet!')">🌐</div>
+        <div class="app-icon" onclick="openApp('browser.html')">🌐</div>
         <div class="app-name">Browser</div>
       </div>
     </div>
@@ -171,8 +175,9 @@
   </div>
 
   <script>
-    // --- JAVASCRIPT ---
+    // --- JAVASCRIPT: The Brains of the Phone ---
 
+    // 1. Power On and Enter Full Screen
     function powerOn() {
       let elem = document.documentElement;
       if (elem.requestFullscreen) elem.requestFullscreen();
@@ -183,6 +188,7 @@
       document.getElementById('home-screen').style.display = 'block';
     }
 
+    // 2. Make the clock work
     function updateClock() {
       const now = new Date();
       let hours = now.getHours();
@@ -194,9 +200,7 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    // --- NEW: App Opening Logic ---
-
-    // Takes the filename (e.g., 'messages.html') and loads it into the iframe
+    // 3. App Opening Logic
     function openApp(appUrl) {
       document.getElementById('app-frame').src = appUrl;
       document.getElementById('app-window').style.display = 'block';
@@ -204,7 +208,7 @@
       document.getElementById('status-bar').style.color = 'black'; 
     }
 
-    // Closes the iframe window and clears it
+    // 4. App Closing Logic
     function closeApp() {
       document.getElementById('app-window').style.display = 'none';
       document.getElementById('app-frame').src = "";
