@@ -29,12 +29,11 @@
       z-index: 100; 
     }
 
-    /* Note: We added an ID here so the Settings app can change its color */
     #home-screen {
       display: none; 
       width: 100vw;
       height: 100vh;
-      background: linear-gradient(to bottom right, #ff7e5f, #feb47b); /* Default wallpaper */
+      background: linear-gradient(to bottom right, #ff7e5f, #feb47b); 
       position: relative;
     }
 
@@ -173,6 +172,10 @@
         <div class="app-icon" onclick="openApp('tictactoe.html')">❌</div>
         <div class="app-name">Games</div>
       </div>
+      <div class="app-container">
+        <div class="app-icon" onclick="openApp('dialer.html')">📞</div>
+        <div class="app-name">Phone</div>
+      </div>
     </div>
   </div>
 
@@ -182,9 +185,6 @@
   </div>
 
   <script>
-    // --- JAVASCRIPT ---
-
-    // 1. CHECK FOR SAVED WALLPAPER ON LOAD
     const savedWallpaper = localStorage.getItem('phoneWallpaper');
     if (savedWallpaper) {
       document.getElementById('home-screen').style.background = savedWallpaper;
