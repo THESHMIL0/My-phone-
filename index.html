@@ -50,7 +50,7 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 60; /* Higher z-index so it stays above open apps */
+      z-index: 60; 
     }
 
     /* The time and battery icons */
@@ -62,7 +62,7 @@
       font-size: 14px;
       font-weight: bold;
       position: relative;
-      z-index: 60; /* Keeps clock visible above apps */
+      z-index: 60; 
     }
 
     /* The grid holding our apps */
@@ -107,14 +107,14 @@
 
     /* --- THE APP WINDOW (Hidden by default) --- */
     #app-window {
-      display: none; /* Hidden until you click an app */
+      display: none; 
       position: absolute;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
       background-color: white;
-      z-index: 50; /* Sits above the home screen */
+      z-index: 50; 
     }
 
     /* The iframe loads the separate HTML files */
@@ -170,6 +170,10 @@
         <div class="app-icon" onclick="openApp('calculator.html')">🧮</div>
         <div class="app-name">Calculator</div>
       </div>
+      <div class="app-container">
+        <div class="app-icon" onclick="openApp('notes.html')">📝</div>
+        <div class="app-name">Notes</div>
+      </div>
     </div>
   </div>
 
@@ -181,7 +185,6 @@
   <script>
     // --- JAVASCRIPT: The Brains of the Phone ---
 
-    // 1. Power On and Enter Full Screen
     function powerOn() {
       let elem = document.documentElement;
       if (elem.requestFullscreen) elem.requestFullscreen();
@@ -192,7 +195,6 @@
       document.getElementById('home-screen').style.display = 'block';
     }
 
-    // 2. Make the clock work
     function updateClock() {
       const now = new Date();
       let hours = now.getHours();
@@ -204,19 +206,15 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    // 3. App Opening Logic
     function openApp(appUrl) {
       document.getElementById('app-frame').src = appUrl;
       document.getElementById('app-window').style.display = 'block';
-      // Make status bar dark so we can see it on light apps
       document.getElementById('status-bar').style.color = 'black'; 
     }
 
-    // 4. App Closing Logic
     function closeApp() {
       document.getElementById('app-window').style.display = 'none';
       document.getElementById('app-frame').src = "";
-      // Revert status bar to white for the home screen
       document.getElementById('status-bar').style.color = 'white'; 
     }
   </script>
