@@ -15,15 +15,28 @@
       flex-direction: column;
     }
 
-    /* Pushes content down so it isn't hidden by the phone notch */
+    /* Updated Header with Flexbox to fit the back button */
     .header {
       padding-top: 50px; 
       padding-bottom: 15px;
-      text-align: center;
-      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      font-size: 20px;
       font-weight: bold;
       border-bottom: 1px solid #ccc;
       background-color: #f9f9f9;
+    }
+
+    /* The new Back Button styling */
+    .back-btn {
+      position: absolute;
+      left: 15px;
+      color: #007aff; /* Classic blue link color */
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: normal;
     }
 
     .chat-area {
@@ -58,12 +71,15 @@
 </head>
 <body>
 
-  <div class="header">Messages</div>
+  <div class="header">
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
+    <span>Messages</span>
+  </div>
 
   <div class="chat-area">
     <div class="bubble received">Hey! Check out my new phone website! 😎</div>
     <div class="bubble sent">Wow, that is so cool! Are you hosting it on GitHub?</div>
-    <div class="bubble received">Sure am! It even has separate files for apps.</div>
+    <div class="bubble received">Sure am! And now it actually has a back button! 🎉</div>
   </div>
 
 </body>
