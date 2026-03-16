@@ -27,6 +27,7 @@
       font-weight: bold;
       border-bottom: 1px solid #ccc;
       background-color: #f9f9f9;
+      z-index: 10;
     }
 
     .back-btn {
@@ -44,7 +45,7 @@
       display: flex;
       flex-direction: column;
       gap: 15px;
-      overflow-y: auto; /* Allows scrolling if messages fill the screen */
+      overflow-y: auto;
       padding-bottom: 20px;
     }
 
@@ -53,7 +54,13 @@
       border-radius: 20px;
       max-width: 70%;
       font-size: 15px;
-      word-wrap: break-word; /* Prevents long words from breaking the bubble */
+      word-wrap: break-word;
+      animation: popIn 0.3s ease-out; /* Tiny animation when a message appears */
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     .received {
@@ -69,11 +76,39 @@
       border-bottom-right-radius: 5px;
     }
 
-    /* --- NEW: The Input Area at the bottom --- */
+    /* --- THE TYPING INDICATOR --- */
+    .typing-indicator {
+      display: none; /* Hidden until the bot is typing */
+      background-color: #e5e5ea;
+      align-self: flex-start;
+      border-radius: 20px;
+      border-bottom-left-radius: 5px;
+      padding: 12px 18px;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background-color: #8e8e93;
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    /* The Input Area at the bottom */
     .input-area {
       display: flex;
       padding: 10px 15px;
-      padding-bottom: 30px; /* Extra padding so the home bar doesn't cover it */
+      padding-bottom: 30px; 
       border-top: 1px solid #ccc;
       background-color: #f9f9f9;
     }
@@ -111,78 +146,126 @@
   </div>
 
   <div class="chat-area" id="chat-area">
-    <div class="bubble received">Hi there! I am your phone's AI bot. Send me a message!</div>
+    <div class="typing-indicator" id="typing-indicator">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
   </div>
 
   <div class="input-area">
-    <input type="text" id="message-input" placeholder="Message..." onkeypress="handleKeyPress(event)">
+    <input type="text" id="message-input" placeholder="iMessage..." onkeypress="handleKeyPress(event)">
     <button id="send-btn" onclick="sendMessage()">➤</button>
   </div>
 
   <script>
-    // --- JAVASCRIPT: The Brains of our Chat ---
+    // --- JAVASCRIPT: Memory & AI Brain ---
 
-    // This runs when you click the Send button
-    function sendMessage() {
-      const inputField = document.getElementById('message-input');
-      const messageText = inputField.value.trim(); // Get text and remove extra spaces
+    const chatArea = document.getElementById('chat-area');
+    const typingIndicator = document.getElementById('typing-indicator');
+    
+    // An array to hold all our messages so we can save them
+    let chatHistory = [];
 
-      // If the input is empty, do nothing
-      if (messageText === "") return;
-
-      // 1. Add the user's message to the screen
-      addMessageToScreen(messageText, 'sent');
+    // 1. LOAD MESSAGES WHEN APP OPENS
+    function loadMessages() {
+      const savedChats = localStorage.getItem('phoneChats');
       
-      // 2. Clear the input box so you can type again
-      inputField.value = "";
-
-      // 3. Make the AI reply after 1 second (1000 milliseconds)
-      setTimeout(aiReply, 1000);
+      if (savedChats) {
+        // If we have saved chats, convert them back from text into a list
+        chatHistory = JSON.parse(savedChats);
+        
+        // Put each saved message on the screen
+        chatHistory.forEach(msg => {
+          createBubble(msg.text, msg.type);
+        });
+      } else {
+        // If this is the very first time opening the app, create a welcome message
+        const welcomeMsg = { text: "Hi there! I am your AI bot. My memory is now working! 🧠", type: "received" };
+        chatHistory.push(welcomeMsg);
+        saveMessages();
+        createBubble(welcomeMsg.text, welcomeMsg.type);
+      }
+      
+      scrollToBottom();
     }
 
-    // This creates a new chat bubble and puts it on the screen
-    function addMessageToScreen(text, type) {
-      const chatArea = document.getElementById('chat-area');
-      
-      // Create a new div element for the bubble
+    // 2. SAVE MESSAGES TO MEMORY
+    function saveMessages() {
+      // JSON.stringify turns our list into text so the browser can save it permanently
+      localStorage.setItem('phoneChats', JSON.stringify(chatHistory));
+    }
+
+    // 3. CREATE A CHAT BUBBLE ON SCREEN
+    function createBubble(text, type) {
       const newBubble = document.createElement('div');
-      newBubble.className = "bubble " + type; // e.g., "bubble sent" or "bubble received"
+      newBubble.className = "bubble " + type; 
       newBubble.textContent = text;
       
-      // Add it to the chat area
-      chatArea.appendChild(newBubble);
-      
-      // Auto-scroll to the bottom so we always see the newest message
+      // We insert the new message right BEFORE the typing indicator
+      chatArea.insertBefore(newBubble, typingIndicator);
+      scrollToBottom();
+    }
+
+    function scrollToBottom() {
       chatArea.scrollTop = chatArea.scrollHeight;
     }
 
-    // This is our fake AI brain
+    // 4. SEND A MESSAGE
+    function sendMessage() {
+      const inputField = document.getElementById('message-input');
+      const messageText = inputField.value.trim();
+
+      if (messageText === "") return;
+
+      // Add user message to history, save it, and show it
+      chatHistory.push({ text: messageText, type: 'sent' });
+      saveMessages();
+      createBubble(messageText, 'sent');
+      
+      inputField.value = "";
+
+      // Show the typing indicator
+      typingIndicator.style.display = 'flex';
+      scrollToBottom();
+
+      // Make the AI wait 1.5 seconds before replying
+      setTimeout(aiReply, 1500);
+    }
+
+    // 5. THE AI REPLY LOGIC
     function aiReply() {
-      // A list of random things the bot can say
+      // Hide the typing indicator
+      typingIndicator.style.display = 'none';
+
       const botResponses = [
         "That is so cool! 😎",
-        "Tell me more about that.",
-        "I am just a simple JavaScript bot, but I completely agree.",
+        "I am remembering everything you say now!",
         "Beep boop! 🤖",
         "Haha, absolutely! 😂",
         "Whoa, I didn't know that!",
-        "You are a great programmer!"
+        "You are an amazing coder! 💻",
+        "Tell me more..."
       ];
 
-      // Pick a random response from the list
       const randomIndex = Math.floor(Math.random() * botResponses.length);
       const chosenReply = botResponses[randomIndex];
 
-      // Add the bot's message to the screen
-      addMessageToScreen(chosenReply, 'received');
+      // Add bot message to history, save it, and show it
+      chatHistory.push({ text: chosenReply, type: 'received' });
+      saveMessages();
+      createBubble(chosenReply, 'received');
     }
 
-    // This lets you press the "Enter" key on your keyboard to send
+    // Press enter to send
     function handleKeyPress(event) {
       if (event.key === 'Enter') {
         sendMessage();
       }
     }
+
+    // Run the load function immediately when the app opens!
+    loadMessages();
   </script>
 
 </body>
