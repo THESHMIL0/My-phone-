@@ -8,11 +8,12 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #f2f2f7; /* Standard settings gray background */
+      background-color: #f2f2f7; 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-y: auto; /* Allows scrolling if settings get too long */
     }
 
     .header {
@@ -38,6 +39,7 @@
 
     .settings-list {
       padding: 20px;
+      padding-bottom: 50px; /* Room for home bar */
     }
 
     .section-title {
@@ -46,9 +48,10 @@
       text-transform: uppercase;
       margin-bottom: 10px;
       margin-left: 10px;
+      margin-top: 20px;
     }
 
-    /* The grid of wallpaper options */
+    /* --- WALLPAPER SECTION --- */
     .wallpaper-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -56,18 +59,74 @@
       background-color: white;
       padding: 20px;
       border-radius: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
     .wallpaper-option {
-      height: 120px;
+      height: 100px;
       border-radius: 10px;
       cursor: pointer;
-      border: 2px solid transparent;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     .wallpaper-option:active {
       transform: scale(0.95);
+    }
+
+    /* --- SETTINGS GROUPS (Security & Reset) --- */
+    .settings-group {
+      background-color: white;
+      border-radius: 15px;
+      padding: 0 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .settings-item {
+      padding: 15px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+    }
+
+    /* Adds a line between items, but not the last one */
+    .settings-item:not(:last-child) {
+      border-bottom: 1px solid #eee;
+    }
+
+    /* Passcode Input Area */
+    .input-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .passcode-input {
+      width: 60px;
+      padding: 5px;
+      font-size: 16px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .save-btn {
+      background-color: #007aff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Danger Button */
+    .danger-text {
+      color: #ff3b30;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -79,35 +138,80 @@
   </div>
 
   <div class="settings-list">
-    <div class="section-title">Choose Wallpaper</div>
     
+    <div class="section-title">Display</div>
     <div class="wallpaper-grid">
       <div class="wallpaper-option" style="background: linear-gradient(to bottom right, #ff7e5f, #feb47b);" onclick="changeWallpaper('linear-gradient(to bottom right, #ff7e5f, #feb47b)')"></div>
-      
       <div class="wallpaper-option" style="background: linear-gradient(to bottom right, #2193b0, #6dd5ed);" onclick="changeWallpaper('linear-gradient(to bottom right, #2193b0, #6dd5ed)')"></div>
-      
       <div class="wallpaper-option" style="background: linear-gradient(to bottom right, #41295a, #2F0743);" onclick="changeWallpaper('linear-gradient(to bottom right, #41295a, #2F0743)')"></div>
-      
       <div class="wallpaper-option" style="background: linear-gradient(to bottom right, #11998e, #38ef7d);" onclick="changeWallpaper('linear-gradient(to bottom right, #11998e, #38ef7d)')"></div>
-      
       <div class="wallpaper-option" style="background: #000;" onclick="changeWallpaper('#000')"></div>
-      
       <div class="wallpaper-option" style="background: linear-gradient(to bottom right, #ff9a9e, #fecfef);" onclick="changeWallpaper('linear-gradient(to bottom right, #ff9a9e, #fecfef)')"></div>
     </div>
+
+    <div class="section-title">Security</div>
+    <div class="settings-group">
+      <div class="settings-item">
+        <span>New Passcode</span>
+        <div class="input-group">
+          <input type="password" id="new-passcode" class="passcode-input" maxlength="4" placeholder="****">
+          <button class="save-btn" onclick="updatePasscode()">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">System</div>
+    <div class="settings-group">
+      <div class="settings-item">
+        <div class="danger-text" onclick="factoryReset()">Erase All Content & Settings</div>
+      </div>
+    </div>
+
   </div>
 
   <script>
     // --- JAVASCRIPT: The Settings Brain ---
 
+    // 1. Wallpaper Logic
     function changeWallpaper(newBackground) {
-      // 1. Tell the parent window (index.html) to change its background style
       window.parent.document.getElementById('home-screen').style.background = newBackground;
-      
-      // 2. Save the choice to localStorage so it remembers next time you open the website!
+      window.parent.document.getElementById('lock-screen').style.background = newBackground;
       localStorage.setItem('phoneWallpaper', newBackground);
+      alert("Wallpaper updated!");
+    }
+
+    // 2. Custom Passcode Logic
+    function updatePasscode() {
+      const newCode = document.getElementById('new-passcode').value;
       
-      // 3. Give a little alert so the user knows it worked
-      alert("Wallpaper updated! Press Back to see it.");
+      // Check if they typed exactly 4 numbers (and not letters)
+      if (newCode.length === 4 && !isNaN(newCode)) {
+        // Save it to memory!
+        localStorage.setItem('phonePasscode', newCode);
+        
+        // Tell the main phone window to update its brain immediately
+        window.parent.CORRECT_PASSCODE = newCode; 
+        
+        alert("Passcode successfully changed!");
+        document.getElementById('new-passcode').value = ''; // Clear the box
+      } else {
+        alert("Passcode must be exactly 4 numbers.");
+      }
+    }
+
+    // 3. Factory Reset Logic
+    function factoryReset() {
+      // confirm() asks the user a Yes/No question
+      const areYouSure = confirm("Are you sure you want to erase all data? This will delete your notes, messages, wallpaper, and custom passcode. This cannot be undone.");
+      
+      if (areYouSure) {
+        // localStorage.clear() wipes out EVERYTHING we've saved so far
+        localStorage.clear();
+        alert("Phone reset complete. Rebooting...");
+        
+        // This tells the main phone window to refresh the webpage
+        window.parent.location.reload(); 
+      }
     }
   </script>
 
