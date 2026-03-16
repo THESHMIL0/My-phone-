@@ -15,7 +15,7 @@
       flex-direction: column;
     }
 
-    /* Updated Header with Flexbox to fit the back button */
+    /* The Header */
     .header {
       padding-top: 50px; 
       padding-bottom: 15px;
@@ -29,23 +29,23 @@
       background-color: #f9f9f9;
     }
 
-    /* The new Back Button styling */
     .back-btn {
       position: absolute;
       left: 15px;
-      color: #007aff; /* Classic blue link color */
+      color: #007aff;
       font-size: 16px;
       cursor: pointer;
-      font-weight: normal;
     }
 
+    /* The Chat Area */
     .chat-area {
       flex-grow: 1;
       padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 15px;
-      overflow-y: auto;
+      overflow-y: auto; /* Allows scrolling if messages fill the screen */
+      padding-bottom: 20px;
     }
 
     .bubble {
@@ -53,6 +53,7 @@
       border-radius: 20px;
       max-width: 70%;
       font-size: 15px;
+      word-wrap: break-word; /* Prevents long words from breaking the bubble */
     }
 
     .received {
@@ -67,20 +68,122 @@
       align-self: flex-end;
       border-bottom-right-radius: 5px;
     }
+
+    /* --- NEW: The Input Area at the bottom --- */
+    .input-area {
+      display: flex;
+      padding: 10px 15px;
+      padding-bottom: 30px; /* Extra padding so the home bar doesn't cover it */
+      border-top: 1px solid #ccc;
+      background-color: #f9f9f9;
+    }
+
+    #message-input {
+      flex-grow: 1;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      padding: 10px 15px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    #send-btn {
+      background-color: #007aff;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      margin-left: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
 
   <div class="header">
     <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
-    <span>Messages</span>
+    <span>AI Bot 🤖</span>
   </div>
 
-  <div class="chat-area">
-    <div class="bubble received">Hey! Check out my new phone website! 😎</div>
-    <div class="bubble sent">Wow, that is so cool! Are you hosting it on GitHub?</div>
-    <div class="bubble received">Sure am! And now it actually has a back button! 🎉</div>
+  <div class="chat-area" id="chat-area">
+    <div class="bubble received">Hi there! I am your phone's AI bot. Send me a message!</div>
   </div>
+
+  <div class="input-area">
+    <input type="text" id="message-input" placeholder="Message..." onkeypress="handleKeyPress(event)">
+    <button id="send-btn" onclick="sendMessage()">➤</button>
+  </div>
+
+  <script>
+    // --- JAVASCRIPT: The Brains of our Chat ---
+
+    // This runs when you click the Send button
+    function sendMessage() {
+      const inputField = document.getElementById('message-input');
+      const messageText = inputField.value.trim(); // Get text and remove extra spaces
+
+      // If the input is empty, do nothing
+      if (messageText === "") return;
+
+      // 1. Add the user's message to the screen
+      addMessageToScreen(messageText, 'sent');
+      
+      // 2. Clear the input box so you can type again
+      inputField.value = "";
+
+      // 3. Make the AI reply after 1 second (1000 milliseconds)
+      setTimeout(aiReply, 1000);
+    }
+
+    // This creates a new chat bubble and puts it on the screen
+    function addMessageToScreen(text, type) {
+      const chatArea = document.getElementById('chat-area');
+      
+      // Create a new div element for the bubble
+      const newBubble = document.createElement('div');
+      newBubble.className = "bubble " + type; // e.g., "bubble sent" or "bubble received"
+      newBubble.textContent = text;
+      
+      // Add it to the chat area
+      chatArea.appendChild(newBubble);
+      
+      // Auto-scroll to the bottom so we always see the newest message
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    // This is our fake AI brain
+    function aiReply() {
+      // A list of random things the bot can say
+      const botResponses = [
+        "That is so cool! 😎",
+        "Tell me more about that.",
+        "I am just a simple JavaScript bot, but I completely agree.",
+        "Beep boop! 🤖",
+        "Haha, absolutely! 😂",
+        "Whoa, I didn't know that!",
+        "You are a great programmer!"
+      ];
+
+      // Pick a random response from the list
+      const randomIndex = Math.floor(Math.random() * botResponses.length);
+      const chosenReply = botResponses[randomIndex];
+
+      // Add the bot's message to the screen
+      addMessageToScreen(chosenReply, 'received');
+    }
+
+    // This lets you press the "Enter" key on your keyboard to send
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+  </script>
 
 </body>
 </html>
