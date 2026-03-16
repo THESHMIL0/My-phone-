@@ -10,7 +10,7 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background-color: #000; /* Black background for boot screen */
+      background-color: #000; 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
@@ -28,19 +28,18 @@
       color: white;
       font-size: 24px;
       cursor: pointer;
-      z-index: 100; /* Keeps this screen on top of everything */
+      z-index: 100; 
     }
 
     /* --- THE HOME SCREEN --- */
     #home-screen {
-      display: none; /* Hidden until powered on */
+      display: none; 
       width: 100vw;
       height: 100vh;
       background: linear-gradient(to bottom right, #ff7e5f, #feb47b); 
       position: relative;
     }
 
-    /* The camera notch at the top */
     .notch {
       width: 150px;
       height: 30px;
@@ -50,10 +49,9 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 10;
+      z-index: 60; /* Higher z-index so it stays above open apps */
     }
 
-    /* The time and battery icons */
     .status-bar {
       display: flex;
       justify-content: space-between;
@@ -61,9 +59,10 @@
       color: white;
       font-size: 14px;
       font-weight: bold;
+      position: relative;
+      z-index: 60; /* Keeps clock visible above apps */
     }
 
-    /* The grid holding our apps */
     .app-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr); 
@@ -71,7 +70,6 @@
       padding: 40px 20px;
     }
 
-    /* Individual app styling */
     .app-container {
       display: flex;
       flex-direction: column;
@@ -102,6 +100,39 @@
       margin-top: 8px;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     }
+
+    /* --- THE APP WINDOW (Hidden by default) --- */
+    #app-window {
+      display: none; /* Hidden until you click an app */
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: white;
+      z-index: 50; /* Sits above the home screen */
+    }
+
+    /* The iframe loads the separate HTML files */
+    #app-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* The gesture bar to go home */
+    .home-bar {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130px;
+      height: 5px;
+      background-color: #333;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 60;
+    }
   </style>
 </head>
 <body>
@@ -110,67 +141,75 @@
     Tap to Power On ⚡
   </div>
 
-  <div id="home-screen">
-    <div class="notch"></div>
-    
-    <div class="status-bar">
-      <span id="clock">12:00</span>
-      <span>📶 🔋 100%</span>
-    </div>
+  <div class="notch"></div>
+  
+  <div class="status-bar" id="status-bar">
+    <span id="clock">12:00</span>
+    <span>📶 🔋 100%</span>
+  </div>
 
+  <div id="home-screen">
     <div class="app-grid">
       <div class="app-container">
-        <div class="app-icon" onclick="openApp('Messages')">💬</div>
+        <div class="app-icon" onclick="openApp('messages.html')">💬</div>
         <div class="app-name">Messages</div>
       </div>
       <div class="app-container">
-        <div class="app-icon" onclick="openApp('Camera')">📸</div>
+        <div class="app-icon" onclick="alert('Camera not built yet!')">📸</div>
         <div class="app-name">Camera</div>
       </div>
       <div class="app-container">
-        <div class="app-icon" onclick="openApp('Browser')">🌐</div>
+        <div class="app-icon" onclick="alert('Browser not built yet!')">🌐</div>
         <div class="app-name">Browser</div>
       </div>
     </div>
   </div>
 
+  <div id="app-window">
+    <iframe id="app-frame" src=""></iframe>
+    <div class="home-bar" onclick="closeApp()"></div>
+  </div>
+
   <script>
-    // --- JAVASCRIPT: The Brains of the Phone ---
+    // --- JAVASCRIPT ---
 
-    // 1. Power On and Enter Full Screen
     function powerOn() {
-      // Step A: Request full screen from the browser
       let elem = document.documentElement;
-      if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-      } else if (elem.webkitRequestFullscreen) { /* Safari support */
-        elem.webkitRequestFullscreen();
-      } else if (elem.msRequestFullscreen) { /* IE11 support */
-        elem.msRequestFullscreen();
-      }
+      if (elem.requestFullscreen) elem.requestFullscreen();
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+      else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
 
-      // Step B: Hide the boot screen and show the home screen
       document.getElementById('boot-screen').style.display = 'none';
       document.getElementById('home-screen').style.display = 'block';
     }
 
-    // 2. Make the clock work
     function updateClock() {
       const now = new Date();
       let hours = now.getHours();
       let minutes = now.getMinutes();
-      
       minutes = minutes < 10 ? '0' + minutes : minutes;
-      
       document.getElementById('clock').textContent = hours + ':' + minutes;
     }
 
     updateClock();
     setInterval(updateClock, 1000);
 
-    // 3. App click handler
-    function openApp(appName) {
-      alert("Opening " + appName + "! 🚀");
+    // --- NEW: App Opening Logic ---
+
+    // Takes the filename (e.g., 'messages.html') and loads it into the iframe
+    function openApp(appUrl) {
+      document.getElementById('app-frame').src = appUrl;
+      document.getElementById('app-window').style.display = 'block';
+      // Make status bar dark so we can see it on light apps
+      document.getElementById('status-bar').style.color = 'black'; 
+    }
+
+    // Closes the iframe window and clears it
+    function closeApp() {
+      document.getElementById('app-window').style.display = 'none';
+      document.getElementById('app-frame').src = "";
+      // Revert status bar to white for the home screen
+      document.getElementById('status-bar').style.color = 'white'; 
     }
   </script>
 
