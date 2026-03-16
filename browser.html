@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browser</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f1f3f4;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: -apple-system, sans-serif;
+    }
+
+    /* The top search bar area */
+    .header {
+      padding-top: 50px; 
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      background-color: white;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .back-btn {
+      color: #007aff;
+      font-size: 16px;
+      cursor: pointer;
+      margin-left: 15px;
+      margin-right: 15px;
+    }
+
+    /* The fake URL bar */
+    .url-bar {
+      flex-grow: 1;
+      margin-right: 15px;
+      background-color: #e9e9eb;
+      padding: 10px 15px;
+      border-radius: 12px;
+      color: #333;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* The window that loads the actual website */
+    .web-content {
+      flex-grow: 1;
+      width: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="back-btn" onclick="window.parent.closeApp()">◀</div>
+    <div class="url-bar">🔒 wikipedia.org</div>
+  </div>
+
+  <iframe class="web-content" src="https://en.wikipedia.org/wiki/Main_Page"></iframe>
+
+</body>
+</html>
