@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: black; /* Cameras usually have black backgrounds */
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: sans-serif;
+    }
+
+    .header {
+      padding-top: 50px; 
+      padding-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      color: white;
+      font-size: 20px;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 15px;
+      color: #ffd60a; /* Yellow back button for the camera */
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* The actual video feed */
+    #camera-feed {
+      width: 100%;
+      flex-grow: 1;
+      background-color: #222;
+      object-fit: cover; /* Makes sure the video fills the space perfectly */
+    }
+
+    /* The bottom control area */
+    .controls {
+      height: 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-bottom: 20px;
+    }
+
+    /* The big white shutter button */
+    .shutter-btn {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: white;
+      border: 4px solid #ccc;
+      cursor: pointer;
+    }
+
+    .shutter-btn:active {
+      background-color: #ddd; /* Darkens slightly when pressed */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
+    <span>Camera</span>
+  </div>
+
+  <video id="camera-feed" autoplay playsinline></video>
+
+  <div class="controls">
+    <div class="shutter-btn" onclick="takePhoto()"></div>
+  </div>
+
+  <script>
+    // --- JAVASCRIPT: Accessing the real camera ---
+
+    const videoElement = document.getElementById('camera-feed');
+
+    // Ask the browser for permission to use the back camera
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(function(stream) {
+        // If the user says "Allow", attach the camera stream to our video element
+        videoElement.srcObject = stream;
+      })
+      .catch(function(error) {
+        // If they deny permission or don't have a camera
+        console.error("Camera error: ", error);
+        alert("Could not access the camera. Make sure you grant permission!");
+      });
+
+    // A fun little function to make the screen flash when you take a picture
+    function takePhoto() {
+      document.body.style.backgroundColor = "white";
+      setTimeout(() => {
+        document.body.style.backgroundColor = "black";
+      }, 100);
+    }
+  </script>
+
+</body>
+</html>
