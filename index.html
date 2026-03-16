@@ -2,46 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>My Phone OS</title>
   <style>
-    /* Centers the phone on the webpage */
+    /* Reset margins and stop the screen from scrolling */
     body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #222; /* Dark background behind the phone */
       margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000; /* Black background for boot screen */
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* The physical phone casing */
-    .phone-case {
-      width: 350px;
-      height: 700px;
-      background-color: #111;
-      border-radius: 40px;
-      padding: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.8);
-      position: relative;
+    /* --- THE POWER ON SCREEN --- */
+    #boot-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #000;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 100; /* Keeps this screen on top of everything */
     }
 
-    /* The glowing screen */
-    .screen {
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom right, #ff7e5f, #feb47b); /* Cool gradient wallpaper */
-      border-radius: 30px;
-      overflow: hidden; /* Keeps apps from spilling out of the screen */
+    /* --- THE HOME SCREEN --- */
+    #home-screen {
+      display: none; /* Hidden until powered on */
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(to bottom right, #ff7e5f, #feb47b); 
       position: relative;
     }
 
     /* The camera notch at the top */
     .notch {
-      width: 120px;
-      height: 25px;
-      background-color: #111;
+      width: 150px;
+      height: 30px;
+      background-color: #000;
       border-radius: 0 0 15px 15px;
       position: absolute;
       top: 0;
@@ -63,9 +66,9 @@
     /* The grid holding our apps */
     .app-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr); /* 4 apps per row */
-      gap: 15px;
-      padding: 30px 15px;
+      grid-template-columns: repeat(4, 1fr); 
+      gap: 20px;
+      padding: 40px 20px;
     }
 
     /* Individual app styling */
@@ -76,85 +79,100 @@
     }
 
     .app-icon {
-      width: 55px;
-      height: 55px;
+      width: 60px;
+      height: 60px;
       background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 12px;
+      border-radius: 15px;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 28px;
+      font-size: 32px;
       cursor: pointer;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      transition: transform 0.1s; /* Tiny animation when clicked */
+      transition: transform 0.1s;
     }
 
     .app-icon:active {
-      transform: scale(0.9); /* Shrinks slightly when pressed */
+      transform: scale(0.9);
     }
 
     .app-name {
       color: white;
-      font-size: 11px;
-      margin-top: 5px;
+      font-size: 12px;
+      margin-top: 8px;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     }
   </style>
 </head>
 <body>
 
-  <div class="phone-case">
-    <div class="screen">
-      <div class="notch"></div>
-      
-      <div class="status-bar">
-        <span id="clock">12:00</span>
-        <span>📶 🔋 100%</span>
-      </div>
+  <div id="boot-screen" onclick="powerOn()">
+    Tap to Power On ⚡
+  </div>
 
-      <div class="app-grid">
-        <div class="app-container">
-          <div class="app-icon" onclick="openApp('Messages')">💬</div>
-          <div class="app-name">Messages</div>
-        </div>
-        <div class="app-container">
-          <div class="app-icon" onclick="openApp('Camera')">📸</div>
-          <div class="app-name">Camera</div>
-        </div>
-        <div class="app-container">
-          <div class="app-icon" onclick="openApp('Browser')">🌐</div>
-          <div class="app-name">Browser</div>
-        </div>
-      </div>
+  <div id="home-screen">
+    <div class="notch"></div>
+    
+    <div class="status-bar">
+      <span id="clock">12:00</span>
+      <span>📶 🔋 100%</span>
+    </div>
 
+    <div class="app-grid">
+      <div class="app-container">
+        <div class="app-icon" onclick="openApp('Messages')">💬</div>
+        <div class="app-name">Messages</div>
+      </div>
+      <div class="app-container">
+        <div class="app-icon" onclick="openApp('Camera')">📸</div>
+        <div class="app-name">Camera</div>
+      </div>
+      <div class="app-container">
+        <div class="app-icon" onclick="openApp('Browser')">🌐</div>
+        <div class="app-name">Browser</div>
+      </div>
     </div>
   </div>
 
   <script>
     // --- JAVASCRIPT: The Brains of the Phone ---
 
-    // 1. Make the clock work
+    // 1. Power On and Enter Full Screen
+    function powerOn() {
+      // Step A: Request full screen from the browser
+      let elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) { /* Safari support */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE11 support */
+        elem.msRequestFullscreen();
+      }
+
+      // Step B: Hide the boot screen and show the home screen
+      document.getElementById('boot-screen').style.display = 'none';
+      document.getElementById('home-screen').style.display = 'block';
+    }
+
+    // 2. Make the clock work
     function updateClock() {
       const now = new Date();
       let hours = now.getHours();
       let minutes = now.getMinutes();
       
-      // Add a zero in front of numbers less than 10 (e.g., 9:05 instead of 9:5)
       minutes = minutes < 10 ? '0' + minutes : minutes;
       
       document.getElementById('clock').textContent = hours + ':' + minutes;
     }
 
-    // Run the clock immediately, then update it every 1 second (1000 milliseconds)
     updateClock();
     setInterval(updateClock, 1000);
 
-    // 2. Make the apps do something when clicked
+    // 3. App click handler
     function openApp(appName) {
-      alert("You clicked the " + appName + " app! We can build this screen next. 😸");
+      alert("Opening " + appName + "! 🚀");
     }
   </script>
 
 </body>
-  </html>
-  
+</html>
