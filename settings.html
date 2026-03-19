@@ -5,168 +5,98 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Settings</title>
   <style>
-    :root {
-      --bg-color: #f2f2f7;
-      --card-bg: white;
-      --text-color: black;
-      --sub-text: #8e8e93;
-      --border-color: #e5e5ea;
-      --accent: #007aff;
-    }
+    :root { --bg: #f2f2f7; --card: #fff; --text: #000; --accent: #007aff; --border: #e5e5ea; }
+    body.dark { --bg: #000; --card: #1c1c1e; --text: #fff; --border: #38383a; }
+    
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; transition: 0.3s; padding-bottom: 40px; }
+    .nav { padding: 50px 20px 10px; display: flex; align-items: center; position: sticky; top: 0; background: var(--bg); z-index: 5; }
+    .back { color: var(--accent); cursor: pointer; font-size: 17px; }
+    
+    h1 { margin: 10px 20px 20px; font-size: 34px; letter-spacing: -1px; }
+    .group { background: var(--card); margin: 0 15px 25px; border-radius: 12px; overflow: hidden; }
+    
+    .row { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .row:last-child { border-bottom: none; }
+    .label { flex-grow: 1; font-size: 17px; }
+    .val { color: #8e8e93; margin-right: 10px; }
 
-    body.dark-mode {
-      --bg-color: #000;
-      --card-bg: #1c1c1e;
-      --text-color: white;
-      --sub-text: #8e8e93;
-      --border-color: #38383a;
-      --accent: #0a84ff;
-    }
+    /* The Switch */
+    .switch { width: 50px; height: 30px; background: #e5e5ea; border-radius: 15px; position: relative; transition: 0.3s; }
+    .switch.on { background: #34c759; }
+    .dot { width: 26px; height: 26px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .switch.on .dot { transform: translateX(20px); }
 
-    body { margin: 0; background: var(--bg-color); color: var(--text-color); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; height: 100vh; overflow-y: auto; transition: background 0.3s, color 0.3s; padding-bottom: 40px;}
-    
-    .header { padding: 40px 15px 15px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; position: sticky; top: 0; background: var(--bg-color); z-index: 10; border-bottom: 1px solid var(--border-color); backdrop-filter: blur(10px);}
-    .back-btn { position: absolute; left: 15px; color: var(--accent); cursor: pointer; font-size: 16px; font-weight: normal; display: flex; align-items: center; gap: 4px;}
-    
-    h1 { font-size: 34px; font-weight: bold; margin: 20px 15px 10px; letter-spacing: -0.5px;}
-
-    /* Account Card */
-    .account-card { background: var(--card-bg); border-radius: 12px; margin: 0 15px 25px; padding: 15px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer;}
-    .profile-pic { width: 60px; height: 60px; background: linear-gradient(135deg, #a18cd1, #fbc2eb); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; color: white;}
-    .account-info { flex-grow: 1; }
-    .account-name { font-size: 20px; font-weight: 400; margin-bottom: 4px;}
-    .account-desc { font-size: 13px; color: var(--sub-text); }
-    
-    .section-title { margin: 0 0 8px 30px; font-size: 13px; color: var(--sub-text); text-transform: uppercase; letter-spacing: 0.5px;}
-    
-    .list-group { background: var(--card-bg); border-radius: 12px; margin: 0 15px 25px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: background 0.3s; }
-    .list-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.1s; }
-    .list-item:active { background: rgba(0,0,0,0.05); }
-    .list-item:last-child { border-bottom: none; }
-    
-    .icon-box { width: 30px; height: 30px; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: white; margin-right: 15px; font-size: 16px; }
-    .item-text { flex-grow: 1; font-size: 16px; }
-    .item-value { color: var(--sub-text); font-size: 16px; margin-right: 10px; }
-    .chevron { color: #c7c7cc; font-size: 18px; font-weight: bold; font-family: monospace;}
-
-    .toggle { width: 51px; height: 31px; background: #e5e5ea; border-radius: 30px; position: relative; transition: background 0.3s; cursor: pointer; }
-    body.dark-mode .toggle { background: #38383a; }
-    .toggle.active { background: #34c759; }
-    .toggle-circle { width: 27px; height: 27px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; box-shadow: 0 3px 8px rgba(0,0,0,0.15); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .toggle.active .toggle-circle { transform: translateX(20px); }
-
-    .wall-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; background: var(--card-bg); margin: 0 15px 25px; border-radius: 12px; }
-    .wall-opt { height: 70px; border-radius: 8px; cursor: pointer; transition: transform 0.2s; border: 1px solid rgba(0,0,0,0.1);}
-    .wall-opt:active { transform: scale(0.9); }
-    
-    .input-pass { width: 70px; padding: 6px; text-align: center; border: 1px solid var(--border-color); border-radius: 8px; outline: none; margin-right: 10px; background: var(--bg-color); color: var(--text-color); font-size: 16px; font-family: monospace; letter-spacing: 2px;}
-    .save-btn { color: var(--accent); font-weight: bold; border: none; background: transparent; cursor: pointer; font-size: 16px; padding: 5px 10px; border-radius: 8px;}
-    .save-btn:active { background: rgba(0, 122, 255, 0.1); }
+    .wall-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; }
+    .wall { height: 60px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
-  
-  <div class="header">
-    <div class="back-btn" onclick="window.parent.closeApp()">◀ Settings</div>
-  </div>
-
+  <div class="nav"><span class="back" onclick="window.parent.closeApp()">◀ Home</span></div>
   <h1>Settings</h1>
 
-  <div class="account-card">
-    <div class="profile-pic">👨‍💻</div>
-    <div class="account-info">
-      <div class="account-name">Developer Mode</div>
-      <div class="account-desc">OS ID, Cloud, Media & Purchases</div>
+  <div class="group">
+    <div class="row" onclick="toggle('dark')">
+      <div class="label">Dark Mode</div>
+      <div id="dark-sw" class="switch"><div class="dot"></div></div>
     </div>
-    <div class="chevron">></div>
-  </div>
-
-  <div class="list-group">
-    <div class="list-item" onclick="window.parent.triggerInstall()">
-      <div class="icon-box" style="background: linear-gradient(to bottom, #34c759, #28a745);">⬇️</div>
-      <div class="item-text" style="color: var(--accent); font-weight: 500;">Install OS to Home Screen</div>
+    <div class="row" onclick="toggle('lpm')">
+      <div class="label">Low Power Mode</div>
+      <div id="lpm-sw" class="switch"><div class="dot"></div></div>
     </div>
   </div>
 
-  <div class="list-group">
-    <div class="list-item" onclick="toggleDarkMode()">
-      <div class="icon-box" style="background: #000; border: 1px solid #333;">🌙</div>
-      <div class="item-text">Dark Mode</div>
-      <div class="toggle" id="dark-toggle"><div class="toggle-circle"></div></div>
-    </div>
-    
-    <div class="list-item">
-      <div class="icon-box" style="background: #007aff;">📶</div>
-      <div class="item-text">Wi-Fi</div>
-      <div class="item-value">Home_Network</div>
-      <div class="chevron">></div>
-    </div>
-    
-    <div class="list-item">
-      <div class="icon-box" style="background: #007aff;">🎧</div>
-      <div class="item-text">Bluetooth</div>
-      <div class="item-value">On</div>
-      <div class="chevron">></div>
-    </div>
-    
-    <div class="list-item">
-      <div class="icon-box" style="background: #ff3b30;">🔔</div>
-      <div class="item-text">Sounds & Haptics</div>
-      <div class="chevron">></div>
-    </div>
+  <div style="margin-left: 20px; font-size: 13px; color: #8e8e93; text-transform: uppercase;">Wallpaper</div>
+  <div class="group wall-grid">
+    <div class="wall" style="background: linear-gradient(to bottom, #ff7e5f, #feb47b);" onclick="setWall(0)"></div>
+    <div class="wall" style="background: linear-gradient(to bottom, #2193b0, #6dd5ed);" onclick="setWall(1)"></div>
+    <div class="wall" style="background: linear-gradient(to bottom, #000, #434343);" onclick="setWall(2)"></div>
+    <div class="wall" style="background: linear-gradient(to bottom, #833ab4, #fd1d1d);" onclick="setWall(3)"></div>
   </div>
 
-  <div class="section-title">Wallpaper</div>
-  <div class="wall-grid">
-    <div class="wall-opt" style="background: linear-gradient(to bottom right, #ff7e5f, #feb47b);" onclick="wall('linear-gradient(to bottom right, #ff7e5f, #feb47b)')"></div>
-    <div class="wall-opt" style="background: linear-gradient(to bottom right, #2193b0, #6dd5ed);" onclick="wall('linear-gradient(to bottom right, #2193b0, #6dd5ed)')"></div>
-    <div class="wall-opt" style="background: linear-gradient(to bottom right, #41295a, #2F0743);" onclick="wall('linear-gradient(to bottom right, #41295a, #2F0743)')"></div>
-    <div class="wall-opt" style="background: #000;" onclick="wall('#000')"></div>
-  </div>
-
-  <div class="section-title">Security & Lock Screen</div>
-  <div class="list-group">
-    <div class="list-item">
-      <div class="icon-box" style="background: #34c759;">🔒</div>
-      <div class="item-text">Change Passcode</div>
-      <input type="password" id="pass" class="input-pass" maxlength="4" placeholder="****">
-      <button class="save-btn" onclick="saveP()">Save</button>
-    </div>
-  </div>
-
-  <div class="section-title">About Phone</div>
-  <div class="list-group">
-    <div class="list-item">
-      <div class="item-text">OS Version</div>
-      <div class="item-value">v6.0.1 (Premium)</div>
-    </div>
-    <div class="list-item">
-      <div class="item-text">Storage Capacity</div>
-      <div class="item-value">256 GB</div>
-    </div>
-    <div class="list-item" onclick="reset()">
-      <div class="item-text" style="color: #ff3b30; text-align: center; width: 100%; font-weight: 500;">Erase All Content & Settings</div>
-    </div>
+  <div class="group">
+    <div class="row"><div class="label">OS Version</div><div class="val">6.0.1 (Stable)</div></div>
+    <div class="row"><div class="label">Model</div><div class="val">Realme 12+ 5G</div></div>
+    <div class="row" onclick="reset()"><div class="label" style="color:#ff3b30">Reset All Content</div></div>
   </div>
 
   <script>
-    const isDark = localStorage.getItem('phoneDarkMode') === 'true';
-    if (isDark) {
-      document.body.classList.add('dark-mode');
-      document.getElementById('dark-toggle').classList.add('active');
+    const walls = [
+      "linear-gradient(to bottom right, #ff7e5f, #feb47b)",
+      "linear-gradient(to bottom right, #2193b0, #6dd5ed)",
+      "linear-gradient(to bottom right, #000, #434343)",
+      "linear-gradient(to bottom right, #833ab4, #fd1d1d)"
+    ];
+
+    function toggle(type) {
+      let key = (type === 'dark') ? 'phoneDarkMode' : 'lowPowerMode';
+      let state = localStorage.getItem(key) === 'true';
+      localStorage.setItem(key, !state);
+      updateUI();
+      // If LPM is toggled, alert the user
+      if(type === 'lpm') alert(!state ? "Low Power Mode On: Reducing animations..." : "Low Power Mode Off");
     }
 
-    function toggleDarkMode() {
-      const body = document.body;
-      const toggleBtn = document.getElementById('dark-toggle');
-      body.classList.toggle('dark-mode');
-      toggleBtn.classList.toggle('active');
-      localStorage.setItem('phoneDarkMode', body.classList.contains('dark-mode') ? 'true' : 'false');
+    function updateUI() {
+      const isDark = localStorage.getItem('phoneDarkMode') === 'true';
+      const isLPM = localStorage.getItem('lowPowerMode') === 'true';
+      
+      document.body.classList.toggle('dark', isDark);
+      document.getElementById('dark-sw').classList.toggle('on', isDark);
+      document.getElementById('lpm-sw').classList.toggle('on', isLPM);
     }
 
-    function wall(bg) { window.parent.document.getElementById('home-screen').style.background=bg; window.parent.document.getElementById('lock-screen').style.background=bg; localStorage.setItem('phoneWallpaper', bg); }
-    function saveP() { let p = document.getElementById('pass').value; if(p.length===4&&!isNaN(p)){ localStorage.setItem('phonePasscode', p); window.parent.CORRECT_PASSCODE = p; alert("Passcode Saved!"); document.getElementById('pass').value=''; } else alert("Must be exactly 4 numbers."); }
-    function reset() { if(confirm("Are you sure? This will wipe the OS memory.")) { localStorage.clear(); window.parent.location.reload(); } }
+    function setWall(i) {
+      const bg = walls[i];
+      window.parent.document.getElementById('home-screen').style.background = bg;
+      window.parent.document.getElementById('lock-screen').style.background = bg;
+      localStorage.setItem('phoneWallpaper', bg);
+    }
+
+    function reset() {
+      if(confirm("Erase all data?")) { localStorage.clear(); window.parent.location.reload(); }
+    }
+
+    updateUI();
   </script>
 </body>
 </html>
