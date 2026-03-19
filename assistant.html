@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Assistant</title>
+  <style>
+    body { margin: 0; background: #000; color: white; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; align-items: center; }
+    .header { width: 100%; padding: 50px 15px 10px; position: relative; }
+    .back-btn { position: absolute; left: 15px; color: #ff00cc; cursor: pointer; }
+    
+    #transcript { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; font-size: 24px; font-weight: 300; }
+    .bot-reply { color: #ff00cc; font-size: 20px; margin-top: 20px; font-weight: bold; }
+
+    /* The glowing microphone button */
+    .mic-btn { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(to right, #ff00cc, #333399); display: flex; justify-content: center; align-items: center; font-size: 40px; margin-bottom: 50px; cursor: pointer; transition: transform 0.2s; box-shadow: 0 0 20px rgba(255, 0, 204, 0.5); }
+    .mic-btn.listening { animation: pulse 1s infinite; }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,0,204,0.5); }
+      50% { transform: scale(1.1); box-shadow: 0 0 40px rgba(255,0,204,0.8); }
+      100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,0,204,0.5); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header"><div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div></div>
+  
+  <div id="transcript">
+    <div>Tap the mic and say "Hello"</div>
+    <div class="bot-reply" id="reply"></div>
+  </div>
+
+  <div class="mic-btn" id="mic" onclick="startListening()">🎙️</div>
+
+  <script>
+    // Setup Speech Recognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition;
+    
+    if(SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      
+      recognition.onstart = function() {
+        document.getElementById('mic').classList.add('listening');
+        document.getElementById('transcript').children[0].innerText = "Listening...";
+        document.getElementById('reply').innerText = "";
+      };
+
+      recognition.onresult = function(event) {
+        const spokenText = event.results[0][0].transcript;
+        document.getElementById('transcript').children[0].innerText = '"' + spokenText + '"';
+        respondTo(spokenText.toLowerCase());
+      };
+
+      recognition.onend = function() {
+        document.getElementById('mic').classList.remove('listening');
+      };
+    } else {
+      document.getElementById('transcript').children[0].innerText = "Voice API not supported on this browser.";
+    }
+
+    function startListening() {
+      if(recognition) recognition.start();
+    }
+
+    function respondTo(text) {
+      let reply = "I heard you, but I don't know how to answer that yet!";
+      
+      if(text.includes("hello") || text.includes("hi")) {
+        reply = "Hello there! How is your coding going?";
+      } else if (text.includes("time")) {
+        reply = "Look at the status bar at the top of your screen!";
+      } else if (text.includes("joke")) {
+        reply = "Why do programmers prefer dark mode? Because light attracts bugs!";
+      }
+
+      document.getElementById('reply').innerText = reply;
+
+      // Speak it out loud!
+      const speech = new SpeechSynthesisUtterance(reply);
+      window.speechSynthesis.speak(speech);
+    }
+  </script>
+</body>
+</html>
