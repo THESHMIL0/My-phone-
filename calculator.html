@@ -5,171 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculator</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #000; /* Classic dark calculator theme */
-      color: white;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Top header for the back button */
-    .header {
-      padding-top: 50px;
-      padding-bottom: 10px;
-      display: flex;
-      align-items: center;
-    }
-
-    .back-btn {
-      color: #ff9f0a; /* Orange back button to match the theme */
-      font-size: 16px;
-      cursor: pointer;
-      margin-left: 15px;
-    }
-
-    /* The screen where the numbers appear */
-    #display {
-      flex-grow: 1;
-      display: flex;
-      justify-content: flex-end;
-      align-items: flex-end;
-      padding: 20px 30px;
-      font-size: 70px;
-      font-weight: 300;
-      word-break: break-all; /* Keeps big numbers from pushing off screen */
-    }
-
-    /* CSS Grid to lay out our buttons */
-    .keypad {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr); /* 4 columns */
-      gap: 12px;
-      padding: 20px;
-      padding-bottom: 40px; /* Room for the home bar */
-    }
-
-    /* Standard button styling */
-    .btn {
-      background-color: #333;
-      border-radius: 50%;
-      height: 75px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 32px;
-      cursor: pointer;
-      user-select: none; /* Stops text from highlighting when you tap fast */
-      transition: filter 0.1s;
-    }
-
-    .btn:active {
-      filter: brightness(1.5); /* Flashes brighter when tapped */
-    }
-
-    /* Special button colors */
-    .operator {
-      background-color: #ff9f0a; /* Orange */
-      color: white;
-    }
-
-    .clear-btn {
-      background-color: #a5a5a5; /* Light gray */
-      color: black;
-    }
-
-    /* Makes the zero button twice as wide */
-    .zero {
-      grid-column: span 2;
-      border-radius: 40px;
-      justify-content: flex-start;
-      padding-left: 30px;
-    }
+    body { margin: 0; background: #000; color: white; font-family: -apple-system, sans-serif; height: 100vh; display: flex; flex-direction: column; }
+    .header { padding: 45px 15px 10px; display: flex; align-items: center; z-index: 10;}
+    .back-btn { color: #ff9f0a; font-size: 16px; cursor: pointer; font-weight: 500;}
+    
+    #display { flex-grow: 1; display: flex; justify-content: flex-end; align-items: flex-end; padding: 20px 30px; font-size: 80px; font-weight: 300; transition: font-size 0.2s;}
+    
+    .keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 20px 20px 40px; }
+    
+    /* NEW: Fluid Animations */
+    .btn { background: #333; border-radius: 50%; aspect-ratio: 1; display: flex; justify-content: center; align-items: center; font-size: 36px; cursor: pointer; user-select: none; transition: transform 0.1s, filter 0.1s; }
+    .btn:active { transform: scale(0.85); filter: brightness(1.5); }
+    
+    .operator { background: #ff9f0a; color: white; font-weight: bold;}
+    .clear-btn { background: #a5a5a5; color: black; }
+    
+    .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 40px; justify-content: flex-start; padding-left: 35px; }
   </style>
 </head>
 <body>
-
-  <div class="header">
-    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
-  </div>
-
+  <div class="header"><div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div></div>
   <div id="display">0</div>
-
+  
   <div class="keypad">
-    <div class="btn clear-btn" onclick="clearDisplay()">C</div>
-    <div class="btn clear-btn" onclick="appendValue('(')">(</div>
-    <div class="btn clear-btn" onclick="appendValue(')')">)</div>
-    <div class="btn operator" onclick="appendValue('/')">÷</div>
-    
-    <div class="btn" onclick="appendValue('7')">7</div>
-    <div class="btn" onclick="appendValue('8')">8</div>
-    <div class="btn" onclick="appendValue('9')">9</div>
-    <div class="btn operator" onclick="appendValue('*')">×</div>
-    
-    <div class="btn" onclick="appendValue('4')">4</div>
-    <div class="btn" onclick="appendValue('5')">5</div>
-    <div class="btn" onclick="appendValue('6')">6</div>
-    <div class="btn operator" onclick="appendValue('-')">−</div>
-    
-    <div class="btn" onclick="appendValue('1')">1</div>
-    <div class="btn" onclick="appendValue('2')">2</div>
-    <div class="btn" onclick="appendValue('3')">3</div>
-    <div class="btn operator" onclick="appendValue('+')">+</div>
-    
-    <div class="btn zero" onclick="appendValue('0')">0</div>
-    <div class="btn" onclick="appendValue('.')">.</div>
-    <div class="btn operator" onclick="calculate()">=</div>
+    <div class="btn clear-btn" onclick="clearD()">AC</div><div class="btn clear-btn" onclick="add('(')">(</div><div class="btn clear-btn" onclick="add(')')">)</div><div class="btn operator" onclick="add('/')">÷</div>
+    <div class="btn" onclick="add('7')">7</div><div class="btn" onclick="add('8')">8</div><div class="btn" onclick="add('9')">9</div><div class="btn operator" onclick="add('*')">×</div>
+    <div class="btn" onclick="add('4')">4</div><div class="btn" onclick="add('5')">5</div><div class="btn" onclick="add('6')">6</div><div class="btn operator" onclick="add('-')">−</div>
+    <div class="btn" onclick="add('1')">1</div><div class="btn" onclick="add('2')">2</div><div class="btn" onclick="add('3')">3</div><div class="btn operator" onclick="add('+')">+</div>
+    <div class="btn zero" onclick="add('0')">0</div><div class="btn" onclick="add('.')">.</div><div class="btn operator" onclick="calc()">=</div>
   </div>
 
   <script>
-    // --- JAVASCRIPT: The Math Brain ---
-    
-    const display = document.getElementById('display');
-    let currentMath = ""; // This invisible string stores our real math (like "2*3")
+    const d = document.getElementById('display'); 
+    let math = "";
 
-    // Adds a number or symbol to the screen
-    function appendValue(val) {
-      // If the screen just says "0", clear it out before typing
-      if (display.innerText === "0" && val !== ".") {
-        display.innerText = "";
-      }
-      
-      currentMath += val;
-
-      // We replace the * and / with nicer looking symbols just for the visual display
-      let visualText = currentMath.replace(/\*/g, '×').replace(/\//g, '÷');
-      display.innerText = visualText;
+    function adjustFontSize() {
+      if (d.innerText.length > 9) d.style.fontSize = '45px';
+      else if (d.innerText.length > 6) d.style.fontSize = '60px';
+      else d.style.fontSize = '80px';
     }
 
-    // Clears the screen back to zero
-    function clearDisplay() {
-      currentMath = "";
-      display.innerText = "0";
+    function add(v) { 
+      if(d.innerText==="0" && v!==".") d.innerText=""; 
+      math += v; 
+      d.innerText = math.replace(/\*/g,'×').replace(/\//g,'÷'); 
+      adjustFontSize();
     }
 
-    // Does the math when you press "="
-    function calculate() {
-      try {
-        // eval() takes a string like "2+2" and solves it!
-        let result = eval(currentMath); 
-        
-        // If the number is a long decimal, round it a bit to fit on screen
-        if (result % 1 !== 0) {
-            result = result.toFixed(4); 
-        }
+    function clearD() { 
+      math = ""; 
+      d.innerText = "0"; 
+      adjustFontSize();
+    }
 
-        display.innerText = result;
-        currentMath = result.toString(); // Lets you keep doing math with the new answer
-      } catch (error) {
-        // If someone types something weird like "++", show an error
-        display.innerText = "Error";
-        currentMath = "";
-      }
+    function calc() { 
+      try { 
+        let r = eval(math); 
+        if(r % 1 !== 0) r = parseFloat(r.toFixed(6)); // Clean up long decimals
+        d.innerText = r; 
+        math = r.toString(); 
+        adjustFontSize();
+      } catch(e) { 
+        d.innerText = "Error"; 
+        math = ""; 
+      } 
     }
   </script>
-
 </body>
 </html>
