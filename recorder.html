@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Memos</title>
+  <style>
+    body { margin: 0; font-family: -apple-system, sans-serif; height: 100vh; display: flex; flex-direction: column; background: #000; color: white; }
+    .header { padding: 50px 15px 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #333; font-weight: bold;}
+    .back-btn { color: #ff3b30; cursor: pointer; font-weight: normal; }
+    
+    .record-btn { width: 80px; height: 80px; border-radius: 50%; background: #ff3b30; border: 4px solid white; margin: 30px auto 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .record-btn.recording { border-radius: 20%; transform: scale(0.85); animation: pulse 1s infinite alternate; }
+    @keyframes pulse { to { box-shadow: 0 0 20px rgba(255, 59, 48, 0.8); } }
+    
+    .list { flex-grow: 1; padding: 20px; overflow-y: auto; }
+    .audio-item { background: #1c1c1e; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+    audio { width: 100%; height: 40px; outline: none; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
+    <span>Voice Memos</span>
+    <div style="width: 50px;"></div>
+  </div>
+  
+  <div class="list" id="recordings">
+    <div style="text-align: center; color: #666; margin-top: 20px;" id="empty-state">Tap the red button to record!</div>
+  </div>
+  
+  <div class="record-btn" id="btn" onclick="toggle()"></div>
+
+  <script>
+    let mediaRecorder; let audioChunks = []; let isRecording = false;
+    const btn = document.getElementById('btn'); const list = document.getElementById('recordings'); const empty = document.getElementById('empty-state');
+    
+    // Request Microphone Access
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        const div = document.createElement('div'); div.className = 'audio-item';
+        const d = new Date();
+        div.innerHTML = `<div style="font-size:16px; font-weight:500;">Recording • ${d.getHours()}:${d.getMinutes()<10?'0':''}${d.getMinutes()}</div><audio controls src="${audioUrl}"></audio>`;
+        list.appendChild(div);
+        
+        audioChunks = []; // Clear for next recording
+      };
+    }).catch(e => alert("Please allow Microphone access for Voice Memos to work."));
+
+    function toggle() {
+      if (!mediaRecorder) return;
+      if (!isRecording) {
+        mediaRecorder.start(); btn.classList.add('recording'); isRecording = true;
+        if(empty) empty.style.display = 'none';
+      } else {
+        mediaRecorder.stop(); btn.classList.remove('recording'); isRecording = false;
+      }
+    }
+  </script>
+</body>
+</html>
