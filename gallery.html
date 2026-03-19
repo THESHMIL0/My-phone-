@@ -6,12 +6,9 @@
   <title>Gallery</title>
   <style>
     body { margin: 0; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; background: white; }
-    .header { padding: 50px 15px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: relative;}
-    .back-btn { color: #007aff; cursor: pointer; font-size: 16px; }
-    
-    /* Hide the ugly default file input button */
-    input[type="file"] { display: none; }
-    .add-btn { color: #007aff; font-size: 24px; cursor: pointer; font-weight: bold; }
+    .header { padding: 50px 15px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+    .back-btn { color: #007aff; cursor: pointer; font-size: 16px; font-weight: bold;}
+    .clear-btn { color: #ff3b30; cursor: pointer; font-size: 14px; font-weight: bold;}
 
     .gallery-grid { padding: 2px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; overflow-y: auto; flex-grow: 1; padding-bottom: 30px;}
     .photo-box { width: 100%; aspect-ratio: 1 / 1; background-color: #f2f2f7; background-size: cover; background-position: center; cursor: pointer; }
@@ -21,45 +18,45 @@
 </head>
 <body>
   <div class="header">
-    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Home</div>
     <span style="font-weight: bold; font-size: 20px;">Photos</span>
-    <label class="add-btn">
-      +
-      <input type="file" id="photo-upload" accept="image/*" multiple onchange="loadPhotos(event)">
-    </label>
+    <div class="clear-btn" onclick="clearPhotos()">Trash All</div>
   </div>
 
   <div class="empty-state" id="empty-state">
     <div style="font-size: 40px; margin-bottom: 10px;">📸</div>
-    Tap '+' to add photos
+    Take photos in the Camera app!
   </div>
 
   <div class="gallery-grid" id="gallery-grid"></div>
 
   <script>
-    function loadPhotos(event) {
-      const files = event.target.files;
-      const grid = document.getElementById('gallery-grid');
-      const emptyState = document.getElementById('empty-state');
+    const grid = document.getElementById('gallery-grid');
+    const emptyState = document.getElementById('empty-state');
+    
+    // Load photos saved by the Camera app
+    let osPhotos = JSON.parse(localStorage.getItem('os_photos')) || [];
 
-      if (files.length > 0) {
-        emptyState.style.display = 'none'; // Hide the empty message
-      }
-
-      // Loop through all selected photos
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        
-        // Create a temporary URL for the image so the browser can show it
-        const imageUrl = URL.createObjectURL(file);
-        
-        // Create a square div with the image as the background
+    if (osPhotos.length > 0) {
+      emptyState.style.display = 'none';
+      
+      // Loop backwards so newest photos are at the top!
+      for (let i = osPhotos.length - 1; i >= 0; i--) {
         const photoDiv = document.createElement('div');
         photoDiv.className = 'photo-box';
-        photoDiv.style.backgroundImage = `url(${imageUrl})`;
+        photoDiv.style.backgroundImage = `url(${osPhotos[i]})`;
         
-        // Add it to the grid!
+        // Click photo to see it full screen (Alert for now)
+        photoDiv.onclick = () => alert("Beautiful photo!"); 
         grid.appendChild(photoDiv);
+      }
+    }
+
+    function clearPhotos() {
+      if(confirm("Delete all OS photos?")) {
+        localStorage.removeItem('os_photos');
+        grid.innerHTML = '';
+        emptyState.style.display = 'block';
       }
     }
   </script>
