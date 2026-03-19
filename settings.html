@@ -9,49 +9,83 @@
       --bg-color: #f2f2f7;
       --card-bg: white;
       --text-color: black;
-      --sub-text: #666;
-      --border-color: #f2f2f7;
+      --sub-text: #8e8e93;
+      --border-color: #e5e5ea;
+      --accent: #007aff;
     }
 
     body.dark-mode {
       --bg-color: #000;
       --card-bg: #1c1c1e;
       --text-color: white;
-      --sub-text: #a1a1a6;
+      --sub-text: #8e8e93;
       --border-color: #38383a;
+      --accent: #0a84ff;
     }
 
-    body { margin: 0; background: var(--bg-color); color: var(--text-color); font-family: -apple-system, sans-serif; height: 100vh; overflow-y: auto; transition: background 0.3s, color 0.3s; }
+    body { margin: 0; background: var(--bg-color); color: var(--text-color); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; height: 100vh; overflow-y: auto; transition: background 0.3s, color 0.3s; padding-bottom: 40px;}
     
-    /* FIXED THE HEADER: Added positioning so the back button fits perfectly */
-    .header { padding: 50px 15px 15px; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; transition: background 0.3s; position: relative; }
-    .back-btn { position: absolute; left: 15px; color: #007aff; cursor: pointer; font-size: 16px; font-weight: normal; }
+    .header { padding: 40px 15px 15px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; position: sticky; top: 0; background: var(--bg-color); z-index: 10; border-bottom: 1px solid var(--border-color); backdrop-filter: blur(10px);}
+    .back-btn { position: absolute; left: 15px; color: var(--accent); cursor: pointer; font-size: 16px; font-weight: normal; display: flex; align-items: center; gap: 4px;}
     
-    .list-group { background: var(--card-bg); border-radius: 12px; margin: 0 15px 25px; overflow: hidden; transition: background 0.3s; }
-    .list-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; }
+    h1 { font-size: 34px; font-weight: bold; margin: 20px 15px 10px; letter-spacing: -0.5px;}
+
+    /* Account Card */
+    .account-card { background: var(--card-bg); border-radius: 12px; margin: 0 15px 25px; padding: 15px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer;}
+    .profile-pic { width: 60px; height: 60px; background: linear-gradient(135deg, #a18cd1, #fbc2eb); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; color: white;}
+    .account-info { flex-grow: 1; }
+    .account-name { font-size: 20px; font-weight: 400; margin-bottom: 4px;}
+    .account-desc { font-size: 13px; color: var(--sub-text); }
+    
+    .section-title { margin: 0 0 8px 30px; font-size: 13px; color: var(--sub-text); text-transform: uppercase; letter-spacing: 0.5px;}
+    
+    .list-group { background: var(--card-bg); border-radius: 12px; margin: 0 15px 25px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: background 0.3s; }
+    .list-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.1s; }
+    .list-item:active { background: rgba(0,0,0,0.05); }
     .list-item:last-child { border-bottom: none; }
     
     .icon-box { width: 30px; height: 30px; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: white; margin-right: 15px; font-size: 16px; }
     .item-text { flex-grow: 1; font-size: 16px; }
-    .chevron { color: var(--sub-text); font-size: 16px; font-weight: bold; }
+    .item-value { color: var(--sub-text); font-size: 16px; margin-right: 10px; }
+    .chevron { color: #c7c7cc; font-size: 18px; font-weight: bold; font-family: monospace;}
 
-    .toggle { width: 50px; height: 30px; background: #38383a; border-radius: 30px; position: relative; transition: background 0.3s; cursor: pointer; }
+    .toggle { width: 51px; height: 31px; background: #e5e5ea; border-radius: 30px; position: relative; transition: background 0.3s; cursor: pointer; }
+    body.dark-mode .toggle { background: #38383a; }
     .toggle.active { background: #34c759; }
-    .toggle-circle { width: 26px; height: 26px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.3s; }
+    .toggle-circle { width: 27px; height: 27px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; box-shadow: 0 3px 8px rgba(0,0,0,0.15); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .toggle.active .toggle-circle { transform: translateX(20px); }
 
     .wall-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; background: var(--card-bg); margin: 0 15px 25px; border-radius: 12px; }
-    .wall-opt { height: 60px; border-radius: 8px; cursor: pointer; transition: transform 0.2s; }
+    .wall-opt { height: 70px; border-radius: 8px; cursor: pointer; transition: transform 0.2s; border: 1px solid rgba(0,0,0,0.1);}
     .wall-opt:active { transform: scale(0.9); }
     
-    .input-pass { width: 60px; padding: 5px; text-align: center; border: 1px solid var(--border-color); border-radius: 6px; outline: none; margin-right: 10px; background: var(--bg-color); color: var(--text-color);}
-    .save-btn { color: #007aff; font-weight: bold; border: none; background: transparent; cursor: pointer; font-size: 16px; }
+    .input-pass { width: 70px; padding: 6px; text-align: center; border: 1px solid var(--border-color); border-radius: 8px; outline: none; margin-right: 10px; background: var(--bg-color); color: var(--text-color); font-size: 16px; font-family: monospace; letter-spacing: 2px;}
+    .save-btn { color: var(--accent); font-weight: bold; border: none; background: transparent; cursor: pointer; font-size: 16px; padding: 5px 10px; border-radius: 8px;}
+    .save-btn:active { background: rgba(0, 122, 255, 0.1); }
   </style>
 </head>
 <body>
+  
   <div class="header">
-    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
-    Settings
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Settings</div>
+  </div>
+
+  <h1>Settings</h1>
+
+  <div class="account-card">
+    <div class="profile-pic">👨‍💻</div>
+    <div class="account-info">
+      <div class="account-name">Developer Mode</div>
+      <div class="account-desc">OS ID, Cloud, Media & Purchases</div>
+    </div>
+    <div class="chevron">></div>
+  </div>
+
+  <div class="list-group">
+    <div class="list-item" onclick="window.parent.triggerInstall()">
+      <div class="icon-box" style="background: linear-gradient(to bottom, #34c759, #28a745);">⬇️</div>
+      <div class="item-text" style="color: var(--accent); font-weight: 500;">Install OS to Home Screen</div>
+    </div>
   </div>
 
   <div class="list-group">
@@ -64,11 +98,25 @@
     <div class="list-item">
       <div class="icon-box" style="background: #007aff;">📶</div>
       <div class="item-text">Wi-Fi</div>
+      <div class="item-value">Home_Network</div>
+      <div class="chevron">></div>
+    </div>
+    
+    <div class="list-item">
+      <div class="icon-box" style="background: #007aff;">🎧</div>
+      <div class="item-text">Bluetooth</div>
+      <div class="item-value">On</div>
+      <div class="chevron">></div>
+    </div>
+    
+    <div class="list-item">
+      <div class="icon-box" style="background: #ff3b30;">🔔</div>
+      <div class="item-text">Sounds & Haptics</div>
       <div class="chevron">></div>
     </div>
   </div>
 
-  <div style="margin: 0 0 8px 25px; font-size: 13px; color: var(--sub-text); text-transform: uppercase;">Wallpaper</div>
+  <div class="section-title">Wallpaper</div>
   <div class="wall-grid">
     <div class="wall-opt" style="background: linear-gradient(to bottom right, #ff7e5f, #feb47b);" onclick="wall('linear-gradient(to bottom right, #ff7e5f, #feb47b)')"></div>
     <div class="wall-opt" style="background: linear-gradient(to bottom right, #2193b0, #6dd5ed);" onclick="wall('linear-gradient(to bottom right, #2193b0, #6dd5ed)')"></div>
@@ -76,19 +124,28 @@
     <div class="wall-opt" style="background: #000;" onclick="wall('#000')"></div>
   </div>
 
+  <div class="section-title">Security & Lock Screen</div>
   <div class="list-group">
     <div class="list-item">
       <div class="icon-box" style="background: #34c759;">🔒</div>
-      <div class="item-text">Passcode</div>
+      <div class="item-text">Change Passcode</div>
       <input type="password" id="pass" class="input-pass" maxlength="4" placeholder="****">
       <button class="save-btn" onclick="saveP()">Save</button>
     </div>
   </div>
 
+  <div class="section-title">About Phone</div>
   <div class="list-group">
+    <div class="list-item">
+      <div class="item-text">OS Version</div>
+      <div class="item-value">v6.0.1 (Premium)</div>
+    </div>
+    <div class="list-item">
+      <div class="item-text">Storage Capacity</div>
+      <div class="item-value">256 GB</div>
+    </div>
     <div class="list-item" onclick="reset()">
-      <div class="icon-box" style="background: #ff3b30;">⚠️</div>
-      <div class="item-text" style="color: #ff3b30;">Erase All Content</div>
+      <div class="item-text" style="color: #ff3b30; text-align: center; width: 100%; font-weight: 500;">Erase All Content & Settings</div>
     </div>
   </div>
 
@@ -108,8 +165,8 @@
     }
 
     function wall(bg) { window.parent.document.getElementById('home-screen').style.background=bg; window.parent.document.getElementById('lock-screen').style.background=bg; localStorage.setItem('phoneWallpaper', bg); }
-    function saveP() { let p = document.getElementById('pass').value; if(p.length===4&&!isNaN(p)){ localStorage.setItem('phonePasscode', p); window.parent.CORRECT_PASSCODE = p; alert("Passcode Saved!"); document.getElementById('pass').value=''; } else alert("Must be 4 numbers."); }
-    function reset() { if(confirm("Erase EVERYTHING and reboot?")) { localStorage.clear(); window.parent.location.reload(); } }
+    function saveP() { let p = document.getElementById('pass').value; if(p.length===4&&!isNaN(p)){ localStorage.setItem('phonePasscode', p); window.parent.CORRECT_PASSCODE = p; alert("Passcode Saved!"); document.getElementById('pass').value=''; } else alert("Must be exactly 4 numbers."); }
+    function reset() { if(confirm("Are you sure? This will wipe the OS memory.")) { localStorage.clear(); window.parent.location.reload(); } }
   </script>
 </body>
 </html>
