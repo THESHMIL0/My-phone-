@@ -5,215 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Settings</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #f2f2f7; 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto; /* Allows scrolling if settings get too long */
-    }
+    body { margin: 0; background: #f2f2f7; font-family: -apple-system, sans-serif; height: 100vh; overflow-y: auto; }
+    .header { padding: 50px 15px 15px; display: flex; justify-content: center; background: #f2f2f7; font-size: 30px; font-weight: bold; }
+    .list-group { background: white; border-radius: 12px; margin: 0 15px 25px; overflow: hidden; }
+    .list-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f2f2f7; cursor: pointer; transition: background 0.2s; }
+    .list-item:active { background: #e5e5ea; }
+    .list-item:last-child { border-bottom: none; }
+    
+    .icon-box { width: 30px; height: 30px; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: white; margin-right: 15px; font-size: 16px; }
+    .item-text { flex-grow: 1; font-size: 16px; color: #000; }
+    .chevron { color: #c7c7cc; font-size: 16px; font-weight: bold; }
+    .right-text { color: #8e8e93; font-size: 16px; margin-right: 10px; }
 
-    .header {
-      padding-top: 50px;
-      padding-bottom: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      background-color: white;
-      font-size: 20px;
-      font-weight: bold;
-      border-bottom: 1px solid #ccc;
-    }
+    /* Custom Toggle Switch Animation */
+    .toggle { width: 50px; height: 30px; background: #e5e5ea; border-radius: 30px; position: relative; transition: background 0.3s; cursor: pointer; }
+    .toggle.active { background: #34c759; }
+    .toggle-circle { width: 26px; height: 26px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .toggle.active .toggle-circle { transform: translateX(20px); }
 
-    .back-btn {
-      position: absolute;
-      left: 15px;
-      color: #007aff;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .settings-list {
-      padding: 20px;
-      padding-bottom: 50px; /* Room for home bar */
-    }
-
-    .section-title {
-      font-size: 13px;
-      color: #666;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      margin-left: 10px;
-      margin-top: 20px;
-    }
-
-    /* --- WALLPAPER SECTION --- */
-    .wallpaper-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      background-color: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .wallpaper-option {
-      height: 100px;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .wallpaper-option:active {
-      transform: scale(0.95);
-    }
-
-    /* --- SETTINGS GROUPS (Security & Reset) --- */
-    .settings-group {
-      background-color: white;
-      border-radius: 15px;
-      padding: 0 15px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .settings-item {
-      padding: 15px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 16px;
-    }
-
-    /* Adds a line between items, but not the last one */
-    .settings-item:not(:last-child) {
-      border-bottom: 1px solid #eee;
-    }
-
-    /* Passcode Input Area */
-    .input-group {
-      display: flex;
-      gap: 10px;
-    }
-
-    .passcode-input {
-      width: 60px;
-      padding: 5px;
-      font-size: 16px;
-      text-align: center;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      outline: none;
-    }
-
-    .save-btn {
-      background-color: #007aff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 5px 12px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    /* Danger Button */
-    .danger-text {
-      color: #ff3b30;
-      cursor: pointer;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
+    .wall-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; background: white; margin: 0 15px 25px; border-radius: 12px; }
+    .wall-opt { height: 60px; border-radius: 8px; cursor: pointer; transition: transform 0.2s; }
+    .wall-opt:active { transform: scale(0.9); }
+    
+    .input-pass { width: 60px; padding: 5px; text-align: center; border: 1px solid #ccc; border-radius: 6px; outline: none; margin-right: 10px; }
+    .save-btn { color: #007aff; font-weight: bold; border: none; background: transparent; cursor: pointer; font-size: 16px; }
   </style>
 </head>
 <body>
+  <div class="header">Settings</div>
 
-  <div class="header">
-    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
-    <span>Settings ⚙️</span>
+  <div class="list-group">
+    <div class="list-item" onclick="toggleSwitch('airplane-toggle')">
+      <div class="icon-box" style="background: #ff9500;">✈️</div>
+      <div class="item-text">Airplane Mode</div>
+      <div class="toggle" id="airplane-toggle"><div class="toggle-circle"></div></div>
+    </div>
+    <div class="list-item" onclick="toggleSwitch('wifi-toggle')">
+      <div class="icon-box" style="background: #007aff;">📶</div>
+      <div class="item-text">Wi-Fi</div>
+      <div class="right-text">Home_Network</div>
+      <div class="chevron">></div>
+    </div>
+    <div class="list-item" onclick="toggleSwitch('bt-toggle')">
+      <div class="icon-box" style="background: #007aff;">🎧</div>
+      <div class="item-text">Bluetooth</div>
+      <div class="right-text">On</div>
+      <div class="chevron">></div>
+    </div>
   </div>
 
-  <div class="settings-list">
-    
-    <div class="section-title">Display</div>
-    <div class="wallpaper-grid">
-      <div class="wallpaper-option" style="background: linear-gradient(to bottom right, #ff7e5f, #feb47b);" onclick="changeWallpaper('linear-gradient(to bottom right, #ff7e5f, #feb47b)')"></div>
-      <div class="wallpaper-option" style="background: linear-gradient(to bottom right, #2193b0, #6dd5ed);" onclick="changeWallpaper('linear-gradient(to bottom right, #2193b0, #6dd5ed)')"></div>
-      <div class="wallpaper-option" style="background: linear-gradient(to bottom right, #41295a, #2F0743);" onclick="changeWallpaper('linear-gradient(to bottom right, #41295a, #2F0743)')"></div>
-      <div class="wallpaper-option" style="background: linear-gradient(to bottom right, #11998e, #38ef7d);" onclick="changeWallpaper('linear-gradient(to bottom right, #11998e, #38ef7d)')"></div>
-      <div class="wallpaper-option" style="background: #000;" onclick="changeWallpaper('#000')"></div>
-      <div class="wallpaper-option" style="background: linear-gradient(to bottom right, #ff9a9e, #fecfef);" onclick="changeWallpaper('linear-gradient(to bottom right, #ff9a9e, #fecfef)')"></div>
-    </div>
+  <div style="margin: 0 0 8px 25px; font-size: 13px; color: #666; text-transform: uppercase;">Wallpaper</div>
+  <div class="wall-grid">
+    <div class="wall-opt" style="background: linear-gradient(to bottom right, #ff7e5f, #feb47b);" onclick="wall('linear-gradient(to bottom right, #ff7e5f, #feb47b)')"></div>
+    <div class="wall-opt" style="background: linear-gradient(to bottom right, #2193b0, #6dd5ed);" onclick="wall('linear-gradient(to bottom right, #2193b0, #6dd5ed)')"></div>
+    <div class="wall-opt" style="background: linear-gradient(to bottom right, #41295a, #2F0743);" onclick="wall('linear-gradient(to bottom right, #41295a, #2F0743)')"></div>
+    <div class="wall-opt" style="background: #000;" onclick="wall('#000')"></div>
+  </div>
 
-    <div class="section-title">Security</div>
-    <div class="settings-group">
-      <div class="settings-item">
-        <span>New Passcode</span>
-        <div class="input-group">
-          <input type="password" id="new-passcode" class="passcode-input" maxlength="4" placeholder="****">
-          <button class="save-btn" onclick="updatePasscode()">Save</button>
-        </div>
-      </div>
+  <div class="list-group">
+    <div class="list-item">
+      <div class="icon-box" style="background: #34c759;">🔒</div>
+      <div class="item-text">Passcode</div>
+      <input type="password" id="pass" class="input-pass" maxlength="4" placeholder="****">
+      <button class="save-btn" onclick="saveP()">Save</button>
     </div>
+  </div>
 
-    <div class="section-title">System</div>
-    <div class="settings-group">
-      <div class="settings-item">
-        <div class="danger-text" onclick="factoryReset()">Erase All Content & Settings</div>
-      </div>
+  <div class="list-group">
+    <div class="list-item" onclick="reset()">
+      <div class="icon-box" style="background: #ff3b30;">⚠️</div>
+      <div class="item-text" style="color: #ff3b30;">Erase All Content & Settings</div>
     </div>
-
   </div>
 
   <script>
-    // --- JAVASCRIPT: The Settings Brain ---
-
-    // 1. Wallpaper Logic
-    function changeWallpaper(newBackground) {
-      window.parent.document.getElementById('home-screen').style.background = newBackground;
-      window.parent.document.getElementById('lock-screen').style.background = newBackground;
-      localStorage.setItem('phoneWallpaper', newBackground);
-      alert("Wallpaper updated!");
+    function toggleSwitch(id) {
+      document.getElementById(id).classList.toggle('active');
     }
-
-    // 2. Custom Passcode Logic
-    function updatePasscode() {
-      const newCode = document.getElementById('new-passcode').value;
-      
-      // Check if they typed exactly 4 numbers (and not letters)
-      if (newCode.length === 4 && !isNaN(newCode)) {
-        // Save it to memory!
-        localStorage.setItem('phonePasscode', newCode);
-        
-        // Tell the main phone window to update its brain immediately
-        window.parent.CORRECT_PASSCODE = newCode; 
-        
-        alert("Passcode successfully changed!");
-        document.getElementById('new-passcode').value = ''; // Clear the box
-      } else {
-        alert("Passcode must be exactly 4 numbers.");
-      }
-    }
-
-    // 3. Factory Reset Logic
-    function factoryReset() {
-      // confirm() asks the user a Yes/No question
-      const areYouSure = confirm("Are you sure you want to erase all data? This will delete your notes, messages, wallpaper, and custom passcode. This cannot be undone.");
-      
-      if (areYouSure) {
-        // localStorage.clear() wipes out EVERYTHING we've saved so far
-        localStorage.clear();
-        alert("Phone reset complete. Rebooting...");
-        
-        // This tells the main phone window to refresh the webpage
-        window.parent.location.reload(); 
-      }
-    }
+    function wall(bg) { window.parent.document.getElementById('home-screen').style.background=bg; window.parent.document.getElementById('lock-screen').style.background=bg; localStorage.setItem('phoneWallpaper', bg); }
+    function saveP() { let p = document.getElementById('pass').value; if(p.length===4&&!isNaN(p)){ localStorage.setItem('phonePasscode', p); window.parent.CORRECT_PASSCODE = p; alert("Passcode Saved!"); document.getElementById('pass').value=''; } else alert("Must be 4 numbers."); }
+    function reset() { if(confirm("Erase EVERYTHING and reboot?")) { localStorage.clear(); window.parent.location.reload(); } }
   </script>
-
 </body>
 </html>
