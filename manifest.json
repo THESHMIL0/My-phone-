@@ -1,7 +1,7 @@
 {
   "name": "My Phone OS",
-  "short_name": "Phone OS",
-  "start_url": "index.html",
+  "short_name": "WebOS",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
@@ -9,7 +9,8 @@
     {
       "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/GitHub_Invertocat_Logo.svg/512px-GitHub_Invertocat_Logo.svg.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
