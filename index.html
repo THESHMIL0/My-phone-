@@ -9,18 +9,14 @@
   <style>
     body { margin: 0; padding: 0; overflow: hidden; background-color: #000; font-family: -apple-system, sans-serif; }
 
-    /* Boot & Loading Screens */
     #boot-screen { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background: #000; color: white; font-size: 24px; cursor: pointer; z-index: 100; transition: opacity 0.5s; }
-    
     #loading-screen { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; color: white; z-index: 90; flex-direction: column; justify-content: center; align-items: center; }
     .boot-logo { font-size: 80px; margin-bottom: 40px; animation: pulse 1.5s infinite alternate; }
     .loading-bar-container { width: 150px; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
     .loading-bar-fill { width: 0%; height: 100%; background: white; animation: loadBoot 2.5s ease-out forwards; }
-    
     @keyframes pulse { 0% { opacity: 0.6; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1.05); } }
     @keyframes loadBoot { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }
 
-    /* Lock Screen */
     #lock-screen { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(to bottom right, #ff7e5f, #feb47b); z-index: 80; flex-direction: column; align-items: center; color: white; transition: transform 0.4s ease-in-out; }
     .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: -1; }
     .lock-time { font-size: 70px; font-weight: 200; margin-top: 80px; letter-spacing: 2px; }
@@ -31,9 +27,8 @@
     .lock-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px 30px; margin-bottom: 20px;}
     .lock-btn { width: 65px; height: 65px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); display: flex; justify-content: center; align-items: center; font-size: 30px; color: white; cursor: pointer; }
 
-    /* Home Screen & Dynamic Island */
     #home-screen { display: none; width: 100vw; height: 100vh; background: linear-gradient(to bottom right, #ff7e5f, #feb47b); position: relative; }
-    .notch { width: 150px; height: 30px; background: #000; border-radius: 0 0 15px 15px; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 101; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; justify-content: center; align-items: center; color: #ff9f0a; font-weight: bold; font-family: monospace; font-size: 14px; overflow: hidden; }
+    .notch { width: 150px; height: 30px; background: #000; border-radius: 0 0 15px 15px; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 101; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; justify-content: center; align-items: center; color: #ff9f0a; font-weight: bold; font-family: monospace; font-size: 14px; overflow: hidden; cursor: pointer;}
     .notch.expanded { width: 200px; height: 40px; border-radius: 20px; top: 10px; }
     .notch-text { opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
     .notch.expanded .notch-text { opacity: 1; }
@@ -44,9 +39,9 @@
     .app-container { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
     .app-icon { width: 60px; height: 60px; background: rgba(255, 255, 255, 0.95); border-radius: 18px; display: flex; justify-content: center; align-items: center; font-size: 32px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); pointer-events: none; }
     .app-name { color: white; font-size: 12px; margin-top: 5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.6); pointer-events: none;}
+    
     .hidden-app { display: none !important; }
 
-    /* App Window */
     #app-window { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 95; transform: translateY(100%); opacity: 0; pointer-events: none; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s; }
     #app-window.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
     #app-frame { width: 100%; height: 100%; border: none; }
@@ -56,13 +51,7 @@
 <body>
 
   <div id="boot-screen" onclick="powerOn()">Tap to Power On ⚡</div>
-
-  <div id="loading-screen">
-    <div class="boot-logo">📱</div>
-    <div class="loading-bar-container">
-      <div class="loading-bar-fill"></div>
-    </div>
-  </div>
+  <div id="loading-screen"><div class="boot-logo">📱</div><div class="loading-bar-container"><div class="loading-bar-fill"></div></div></div>
 
   <div class="notch" id="dynamic-island"><span class="notch-text" id="notch-text"></span></div>
   <div class="status-bar" id="status-bar"><span id="small-clock">12:00</span><span>📶 🔋 100%</span></div>
@@ -85,9 +74,7 @@
       <div class="app-container" onclick="openApp('messages.html')"><div class="app-icon">💬</div><div class="app-name">Messages</div></div>
       <div class="app-container" onclick="openApp('browser.html')"><div class="app-icon">🌐</div><div class="app-name">Browser</div></div>
       <div class="app-container" onclick="openApp('camera.html')"><div class="app-icon">📸</div><div class="app-name">Camera</div></div>
-      
       <div class="app-container" onclick="openApp('gallery.html')"><div class="app-icon" style="background: linear-gradient(to bottom right, #ff0844, #ffb199); color: white;">🖼️</div><div class="app-name">Gallery</div></div>
-      
       <div class="app-container" onclick="openApp('clock.html')"><div class="app-icon" style="background: #000; color: #ff9f0a;">⏱️</div><div class="app-name">Clock</div></div>
       <div class="app-container" onclick="openApp('music.html')"><div class="app-icon" style="background: #ff0844; color: white;">🎵</div><div class="app-name">Music</div></div>
       <div class="app-container" onclick="openApp('settings.html')"><div class="app-icon">⚙️</div><div class="app-name">Settings</div></div>
@@ -95,6 +82,9 @@
       
       <div class="app-container hidden-app" id="app-assistant" onclick="openApp('assistant.html')"><div class="app-icon" style="background: linear-gradient(to right, #ff00cc, #333399); color: white;">🎙️</div><div class="app-name">Assistant</div></div>
       <div class="app-container hidden-app" id="app-paint" onclick="openApp('paint.html')"><div class="app-icon" style="background: #ffcc00;">🎨</div><div class="app-name">Paint</div></div>
+      
+      <div class="app-container hidden-app" id="app-snake" onclick="openApp('snake.html')"><div class="app-icon" style="background: #34c759; color: white;">🐍</div><div class="app-name">Snake</div></div>
+      <div class="app-container hidden-app" id="app-piano" onclick="openApp('piano.html')"><div class="app-icon" style="background: #fff; color: black; border: 1px solid #ccc;">🎹</div><div class="app-name">Piano</div></div>
     </div>
   </div>
 
@@ -104,8 +94,12 @@
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
     const savedWallpaper = localStorage.getItem('phoneWallpaper');
     if (savedWallpaper) { document.getElementById('home-screen').style.background = savedWallpaper; document.getElementById('lock-screen').style.background = savedWallpaper; }
+    
+    // Check which apps we own!
     if (localStorage.getItem('own_assistant') === 'true') document.getElementById('app-assistant').classList.remove('hidden-app');
     if (localStorage.getItem('own_paint') === 'true') document.getElementById('app-paint').classList.remove('hidden-app');
+    if (localStorage.getItem('own_snake') === 'true') document.getElementById('app-snake').classList.remove('hidden-app');
+    if (localStorage.getItem('own_piano') === 'true') document.getElementById('app-piano').classList.remove('hidden-app');
 
     function updateNotch(text, isActive) {
       const island = document.getElementById('dynamic-island'), notchText = document.getElementById('notch-text');
@@ -119,16 +113,11 @@
       document.getElementById('boot-screen').style.opacity = '0';
       setTimeout(() => {
         document.getElementById('boot-screen').style.display = 'none';
-        
-        // SHOW LOADING SCREEN FIRST
         document.getElementById('loading-screen').style.display = 'flex'; 
-        
-        // Wait 3 seconds for the loading bar animation to finish
         setTimeout(() => {
           document.getElementById('loading-screen').style.display = 'none';
           document.getElementById('lock-screen').style.display = 'flex'; 
-        }, 2800);
-
+        }, 2500);
       }, 500);
     }
     
