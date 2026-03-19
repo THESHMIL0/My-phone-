@@ -7,30 +7,22 @@
   <style>
     :root { --bg: #f2f2f7; --card: #fff; --text: #000; --accent: #007aff; --border: #e5e5ea; }
     body.dark { --bg: #000; --card: #1c1c1e; --text: #fff; --border: #38383a; }
-    
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; transition: background 0.3s, color 0.3s; padding-bottom: 40px; }
-    .nav { padding: 50px 20px 10px; display: flex; align-items: center; position: sticky; top: 0; background: rgba(242, 242, 247, 0.9); backdrop-filter: blur(10px); z-index: 5; border-bottom: 1px solid var(--border);}
-    body.dark .nav { background: rgba(0, 0, 0, 0.9); }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; transition: 0.3s; padding-bottom: 40px; }
+    .nav { padding: 40px 20px 10px; display: flex; align-items: center; position: sticky; top: 0; background: var(--bg); z-index: 5; }
     .back { color: var(--accent); cursor: pointer; font-size: 17px; font-weight: 500;}
-    
     h1 { margin: 15px 20px 20px; font-size: 34px; letter-spacing: -1px; }
-    .group { background: var(--card); margin: 0 15px 25px; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);}
-    
+    .group { background: var(--card); margin: 0 15px 25px; border-radius: 12px; overflow: hidden; }
     .row { display: flex; align-items: center; padding: 14px 15px; border-bottom: 1px solid var(--border); cursor: pointer; }
     .row:last-child { border-bottom: none; }
     .icon-box { width: 30px; height: 30px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 16px; margin-right: 15px; }
     .label { flex-grow: 1; font-size: 17px; }
     .val { color: #8e8e93; margin-right: 10px; font-size: 16px;}
-
-    /* Toggles */
     .switch { width: 50px; height: 30px; background: #e5e5ea; border-radius: 15px; position: relative; transition: 0.3s; }
     .switch.on { background: #34c759; }
-    .dot { width: 26px; height: 26px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .dot { width: 26px; height: 26px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     .switch.on .dot { transform: translateX(20px); }
-
     .wall-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; }
-    .wall { height: 65px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); transition: transform 0.1s;}
-    .wall:active { transform: scale(0.9); }
+    .wall { height: 60px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
@@ -45,67 +37,45 @@
   </div>
 
   <div class="group">
-    <div class="row" onclick="toggle('dark')">
-      <div class="icon-box" style="background: #000; border: 1px solid #333;">🌙</div>
-      <div class="label">Dark Mode</div>
-      <div id="dark-sw" class="switch"><div class="dot"></div></div>
-    </div>
-    <div class="row" onclick="toggle('lpm')">
-      <div class="icon-box" style="background: #ffcc00; color: black;">🔋</div>
-      <div class="label">Low Power Mode</div>
-      <div id="lpm-sw" class="switch"><div class="dot"></div></div>
-    </div>
+    <div class="row" onclick="toggle('dark')"><div class="label">Dark Mode</div><div id="dark-sw" class="switch"><div class="dot"></div></div></div>
+    <div class="row" onclick="toggle('lpm')"><div class="label">Low Power Mode</div><div id="lpm-sw" class="switch"><div class="dot"></div></div></div>
   </div>
 
   <div style="margin-left: 20px; font-size: 13px; color: #8e8e93; text-transform: uppercase;">Wallpaper</div>
   <div class="group wall-grid">
-    <div class="wall" style="background: linear-gradient(to bottom right, #ff7e5f, #feb47b);" onclick="setWall(0)"></div>
-    <div class="wall" style="background: linear-gradient(to bottom right, #2193b0, #6dd5ed);" onclick="setWall(1)"></div>
-    <div class="wall" style="background: linear-gradient(to bottom right, #000, #434343);" onclick="setWall(2)"></div>
-    <div class="wall" style="background: linear-gradient(to bottom right, #833ab4, #fd1d1d);" onclick="setWall(3)"></div>
+    <div class="wall" style="background: linear-gradient(to bottom, #ff7e5f, #feb47b);" onclick="setWall(0)"></div>
+    <div class="wall" style="background: linear-gradient(to bottom, #2193b0, #6dd5ed);" onclick="setWall(1)"></div>
+    <div class="wall" style="background: linear-gradient(to bottom, #000, #434343);" onclick="setWall(2)"></div>
+    <div class="wall" style="background: linear-gradient(to bottom, #833ab4, #fd1d1d);" onclick="setWall(3)"></div>
   </div>
 
   <div class="group">
-    <div class="row"><div class="label">OS Version</div><div class="val">6.0.2 (Stable)</div></div>
-    <div class="row"><div class="label">Device</div><div class="val">Realme 12+ 5G</div></div>
-    <div class="row" onclick="reset()"><div class="label" style="color:#ff3b30; text-align: center; font-weight: bold; width: 100%;">Erase All OS Data</div></div>
+    <div class="row"><div class="label">OS Version</div><div class="val">6.0.3</div></div>
+    <div class="row"><div class="label">Model</div><div class="val">Realme 12+ 5G</div></div>
+    <div class="row" onclick="reset()"><div class="label" style="color:#ff3b30; text-align: center; font-weight: bold; width: 100%;">Erase All Data</div></div>
   </div>
 
   <script>
-    const walls = [
-      "linear-gradient(to bottom right, #ff7e5f, #feb47b)",
-      "linear-gradient(to bottom right, #2193b0, #6dd5ed)",
-      "linear-gradient(to bottom right, #000, #434343)",
-      "linear-gradient(to bottom right, #833ab4, #fd1d1d)"
-    ];
-
-    function toggle(type) {
-      let key = (type === 'dark') ? 'phoneDarkMode' : 'lowPowerMode';
-      let state = localStorage.getItem(key) === 'true';
-      localStorage.setItem(key, !state);
+    const walls = ["linear-gradient(to bottom right, #ff7e5f, #feb47b)","linear-gradient(to bottom right, #2193b0, #6dd5ed)","linear-gradient(to bottom right, #000, #434343)","linear-gradient(to bottom right, #833ab4, #fd1d1d)"];
+    function toggle(t) {
+      let k = (t === 'dark') ? 'phoneDarkMode' : 'lowPowerMode';
+      localStorage.setItem(k, localStorage.getItem(k) !== 'true');
       updateUI();
     }
-
     function updateUI() {
-      const isDark = localStorage.getItem('phoneDarkMode') === 'true';
-      const isLPM = localStorage.getItem('lowPowerMode') === 'true';
-      
-      document.body.classList.toggle('dark', isDark);
-      document.getElementById('dark-sw').classList.toggle('on', isDark);
-      document.getElementById('lpm-sw').classList.toggle('on', isLPM);
+      const d = localStorage.getItem('phoneDarkMode') === 'true';
+      const l = localStorage.getItem('lowPowerMode') === 'true';
+      document.body.classList.toggle('dark', d);
+      document.getElementById('dark-sw').classList.toggle('on', d);
+      document.getElementById('lpm-sw').classList.toggle('on', l);
     }
-
     function setWall(i) {
       const bg = walls[i];
       window.parent.document.getElementById('home-screen').style.background = bg;
       window.parent.document.getElementById('lock-screen').style.background = bg;
       localStorage.setItem('phoneWallpaper', bg);
     }
-
-    function reset() {
-      if(confirm("Erase all data and factory reset?")) { localStorage.clear(); window.parent.location.reload(); }
-    }
-
+    function reset() { if(confirm("Erase all data?")) { localStorage.clear(); window.parent.location.reload(); } }
     updateUI();
   </script>
 </body>
