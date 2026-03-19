@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Store</title>
+  <style>
+    body { margin: 0; font-family: -apple-system, sans-serif; height: 100vh; background: white; display: flex; flex-direction: column; }
+    .header { padding: 50px 15px 15px; font-size: 30px; font-weight: bold; border-bottom: 1px solid #eee; }
+    .back-btn { color: #007aff; cursor: pointer; font-size: 16px; font-weight: normal; margin-bottom: 10px; }
+    
+    .store-list { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+    
+    .app-card { display: flex; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+    .app-icon { width: 60px; height: 60px; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-size: 30px; margin-right: 15px; }
+    .app-info { flex-grow: 1; }
+    .app-title { font-size: 18px; font-weight: bold; }
+    .app-desc { font-size: 12px; color: #888; }
+    
+    .get-btn { background: #f2f2f7; color: #007aff; font-weight: bold; padding: 8px 20px; border-radius: 20px; cursor: pointer; border: none; font-size: 14px;}
+    .get-btn.owned { background: transparent; color: #ccc; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Home</div>
+    App Store
+  </div>
+
+  <div class="store-list">
+    <div class="app-card">
+      <div class="app-icon" style="background: linear-gradient(to right, #ff00cc, #333399); color: white;">🎙️</div>
+      <div class="app-info">
+        <div class="app-title">Voice Assistant</div>
+        <div class="app-desc">Talk to your phone!</div>
+      </div>
+      <button class="get-btn" id="btn-assistant" onclick="install('assistant')">GET</button>
+    </div>
+
+    <div class="app-card">
+      <div class="app-icon" style="background: #ffcc00;">🎨</div>
+      <div class="app-info">
+        <div class="app-title">Paint Studio</div>
+        <div class="app-desc">Draw and color.</div>
+      </div>
+      <button class="get-btn" id="btn-paint" onclick="install('paint')">GET</button>
+    </div>
+  </div>
+
+  <script>
+    // Check if you already own them
+    if(localStorage.getItem('own_assistant') === 'true') {
+      document.getElementById('btn-assistant').innerText = 'OPEN';
+      document.getElementById('btn-assistant').classList.add('owned');
+    }
+    if(localStorage.getItem('own_paint') === 'true') {
+      document.getElementById('btn-paint').innerText = 'OPEN';
+      document.getElementById('btn-paint').classList.add('owned');
+    }
+
+    function install(app) {
+      const btn = document.getElementById('btn-' + app);
+      if(btn.innerText === 'OPEN') return; // Already owned
+      
+      btn.innerText = 'WAIT...';
+      
+      // Simulate download time
+      setTimeout(() => {
+        // 1. Save to memory
+        localStorage.setItem('own_' + app, 'true');
+        btn.innerText = 'OPEN';
+        btn.classList.add('owned');
+        
+        // 2. Tell the main phone screen to unhide the app!
+        if(window.parent.installApp) {
+          window.parent.installApp('app-' + app);
+          alert(app.toUpperCase() + " installed to your Home Screen!");
+        }
+      }, 1500);
+    }
+  </script>
+</body>
+</html>
