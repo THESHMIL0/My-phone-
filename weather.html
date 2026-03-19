@@ -7,33 +7,52 @@
   <style>
     body { margin: 0; font-family: -apple-system, sans-serif; height: 100vh; background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%); color: white; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
     .header { width: 100%; padding: 50px 15px 10px; display: flex; align-items: center; position: relative; }
-    .back-btn { position: absolute; left: 15px; color: white; font-weight: bold; cursor: pointer; }
+    .back-btn { position: absolute; left: 15px; color: white; font-weight: bold; cursor: pointer; z-index: 10;}
     
-    .city { font-size: 32px; font-weight: 300; margin-top: 30px; }
+    .city { font-size: 32px; font-weight: 300; margin-top: 30px; text-align: center; }
     .temp { font-size: 90px; font-weight: 200; margin-top: -10px; }
     .desc { font-size: 20px; text-transform: capitalize; }
     
-    /* Animated Sun/Cloud */
     .icon-container { font-size: 120px; margin: 20px 0; position: relative; animation: float 3s ease-in-out infinite; text-shadow: 0 10px 20px rgba(0,0,0,0.2); }
     @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-    .forecast { margin-top: auto; margin-bottom: 50px; width: 80%; background: rgba(255,255,255,0.2); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px); }
-    .day { display: flex; justify-content: space-between; font-size: 18px; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
-    .day:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+    .loading { font-size: 18px; margin-top: 50px; text-align: center; }
   </style>
 </head>
 <body>
   <div class="header"><div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div></div>
   
-  <div class="city">New York</div>
-  <div class="icon-container">⛅</div>
-  <div class="temp">72°</div>
-  <div class="desc">Partly Cloudy</div>
+  <div class="city" id="location-text">Locating...</div>
+  <div class="icon-container" id="weather-icon">🌍</div>
+  <div class="temp" id="temperature">--°</div>
+  <div class="desc" id="description">Fetching Live Data</div>
 
-  <div class="forecast">
-    <div class="day"><span>Tomorrow</span> <span>☀️ 75°</span></div>
-    <div class="day"><span>Friday</span> <span>🌧️ 68°</span></div>
-    <div class="day"><span>Saturday</span> <span>⛅ 71°</span></div>
-  </div>
+  <script>
+    // 1. Get User's Location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        
+        document.getElementById('location-text').innerText = "Current Location";
+
+        // 2. Fetch the live weather from a free API using their coordinates!
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit`)
+          .then(response => response.json())
+          .then(data => {
+            const temp = Math.round(data.current_weather.temperature);
+            document.getElementById('temperature').innerText = temp + "°";
+            document.getElementById('description').innerText = "Live API Data";
+            document.getElementById('weather-icon').innerText = "⛅";
+          })
+          .catch(err => {
+            document.getElementById('description').innerText = "Error loading data.";
+          });
+      }, error => {
+        document.getElementById('location-text').innerText = "Location Denied";
+        document.getElementById('description').innerText = "Please allow location access.";
+      });
+    }
+  </script>
 </body>
 </html>
