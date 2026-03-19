@@ -9,7 +9,6 @@
     .header { width: 100%; padding: 50px 15px 10px; display: flex; justify-content: center; position: relative; font-weight: bold; }
     .back-btn { position: absolute; left: 15px; color: #ff0844; cursor: pointer; }
     
-    /* Spinning Record Animation */
     .album-art { width: 200px; height: 200px; background: linear-gradient(135deg, #ff0844, #ffb199); border-radius: 50%; margin: 60px 0 40px; border: 10px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; font-size: 80px; transition: transform 0.2s; }
     .spin { animation: rotation 4s infinite linear; }
     @keyframes rotation { from { transform: rotate(0deg); } to { transform: rotate(359deg); } }
@@ -18,7 +17,7 @@
     .artist { font-size: 16px; color: #8e8e93; }
 
     .progress { width: 80%; height: 6px; background: #333; border-radius: 3px; margin: 40px 0 20px; position: relative; }
-    .progress-bar { width: 30%; height: 100%; background: #ff0844; border-radius: 3px; position: relative; }
+    .progress-bar { width: 0%; height: 100%; background: #ff0844; border-radius: 3px; position: relative; transition: width 0.1s linear;}
     .progress-bar::after { content: ''; position: absolute; right: -5px; top: -4px; width: 14px; height: 14px; background: white; border-radius: 50%; }
 
     .controls { display: flex; gap: 40px; align-items: center; margin-top: 20px; font-size: 30px; }
@@ -30,35 +29,54 @@
   <div class="header"><div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div> Now Playing</div>
   
   <div class="album-art" id="record">🎵</div>
-  
-  <div class="title">Coding Vibes</div>
-  <div class="artist">The Developers</div>
+  <div class="title">Tech House Vibes</div>
+  <div class="artist">DJ JavaScript</div>
 
-  <div class="progress"><div class="progress-bar"></div></div>
+  <div class="progress"><div class="progress-bar" id="prog-bar"></div></div>
 
   <div class="controls">
-    <div>⏮</div>
+    <div onclick="audio.currentTime = 0">⏮</div>
     <div class="play-btn" id="play" onclick="togglePlay()">▶️</div>
     <div>⏭</div>
   </div>
 
+  <audio id="real-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
   <script>
+    const audio = document.getElementById('real-audio');
+    const playBtn = document.getElementById('play');
+    const record = document.getElementById('record');
+    const progBar = document.getElementById('prog-bar');
     let isPlaying = false;
+
     function togglePlay() {
-      isPlaying = !isPlaying;
-      const btn = document.getElementById('play');
-      const rec = document.getElementById('record');
-      
       if (isPlaying) {
-        btn.innerHTML = '⏸';
-        btn.style.paddingLeft = '0'; // Fix center alignment for pause
-        rec.classList.add('spin');
+        audio.pause();
+        playBtn.innerHTML = '▶️';
+        playBtn.style.paddingLeft = '5px';
+        record.classList.remove('spin');
       } else {
-        btn.innerHTML = '▶️';
-        btn.style.paddingLeft = '5px';
-        rec.classList.remove('spin');
+        audio.play();
+        playBtn.innerHTML = '⏸';
+        playBtn.style.paddingLeft = '0'; 
+        record.classList.add('spin');
       }
+      isPlaying = !isPlaying;
     }
+
+    // Automatically move the progress bar as the song plays!
+    audio.ontimeupdate = function() {
+      const percentage = (audio.currentTime / audio.duration) * 100;
+      progBar.style.width = percentage + "%";
+    };
+
+    // When song ends, reset button
+    audio.onended = function() {
+      isPlaying = false;
+      playBtn.innerHTML = '▶️';
+      record.classList.remove('spin');
+      progBar.style.width = "0%";
+    };
   </script>
 </body>
 </html>
