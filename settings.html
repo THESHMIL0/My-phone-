@@ -5,29 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Settings</title>
   <style>
-    body { margin: 0; background: #f2f2f7; font-family: -apple-system, sans-serif; height: 100vh; overflow-y: auto; }
-    .header { padding: 50px 15px 15px; display: flex; justify-content: center; background: #f2f2f7; font-size: 30px; font-weight: bold; }
-    .list-group { background: white; border-radius: 12px; margin: 0 15px 25px; overflow: hidden; }
-    .list-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f2f2f7; cursor: pointer; transition: background 0.2s; }
-    .list-item:active { background: #e5e5ea; }
+    /* CSS VARIABLES: This is the secret to Dark Mode! */
+    :root {
+      --bg-color: #f2f2f7;
+      --card-bg: white;
+      --text-color: black;
+      --sub-text: #666;
+      --border-color: #f2f2f7;
+    }
+
+    /* When dark-mode class is added to body, we flip the variables! */
+    body.dark-mode {
+      --bg-color: #000;
+      --card-bg: #1c1c1e;
+      --text-color: white;
+      --sub-text: #a1a1a6;
+      --border-color: #38383a;
+    }
+
+    body { margin: 0; background: var(--bg-color); color: var(--text-color); font-family: -apple-system, sans-serif; height: 100vh; overflow-y: auto; transition: background 0.3s, color 0.3s; }
+    .header { padding: 50px 15px 15px; display: flex; justify-content: center; font-size: 30px; font-weight: bold; transition: background 0.3s; }
+    
+    .list-group { background: var(--card-bg); border-radius: 12px; margin: 0 15px 25px; overflow: hidden; transition: background 0.3s; }
+    .list-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; }
     .list-item:last-child { border-bottom: none; }
     
     .icon-box { width: 30px; height: 30px; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: white; margin-right: 15px; font-size: 16px; }
-    .item-text { flex-grow: 1; font-size: 16px; color: #000; }
-    .chevron { color: #c7c7cc; font-size: 16px; font-weight: bold; }
-    .right-text { color: #8e8e93; font-size: 16px; margin-right: 10px; }
+    .item-text { flex-grow: 1; font-size: 16px; }
+    .chevron { color: var(--sub-text); font-size: 16px; font-weight: bold; }
 
     /* Custom Toggle Switch Animation */
-    .toggle { width: 50px; height: 30px; background: #e5e5ea; border-radius: 30px; position: relative; transition: background 0.3s; cursor: pointer; }
+    .toggle { width: 50px; height: 30px; background: #38383a; border-radius: 30px; position: relative; transition: background 0.3s; cursor: pointer; }
     .toggle.active { background: #34c759; }
-    .toggle-circle { width: 26px; height: 26px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .toggle-circle { width: 26px; height: 26px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.3s; }
     .toggle.active .toggle-circle { transform: translateX(20px); }
 
-    .wall-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; background: white; margin: 0 15px 25px; border-radius: 12px; }
+    .wall-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; background: var(--card-bg); margin: 0 15px 25px; border-radius: 12px; }
     .wall-opt { height: 60px; border-radius: 8px; cursor: pointer; transition: transform 0.2s; }
     .wall-opt:active { transform: scale(0.9); }
     
-    .input-pass { width: 60px; padding: 5px; text-align: center; border: 1px solid #ccc; border-radius: 6px; outline: none; margin-right: 10px; }
+    .input-pass { width: 60px; padding: 5px; text-align: center; border: 1px solid var(--border-color); border-radius: 6px; outline: none; margin-right: 10px; background: var(--bg-color); color: var(--text-color);}
     .save-btn { color: #007aff; font-weight: bold; border: none; background: transparent; cursor: pointer; font-size: 16px; }
   </style>
 </head>
@@ -35,26 +52,20 @@
   <div class="header">Settings</div>
 
   <div class="list-group">
-    <div class="list-item" onclick="toggleSwitch('airplane-toggle')">
-      <div class="icon-box" style="background: #ff9500;">✈️</div>
-      <div class="item-text">Airplane Mode</div>
-      <div class="toggle" id="airplane-toggle"><div class="toggle-circle"></div></div>
+    <div class="list-item" onclick="toggleDarkMode()">
+      <div class="icon-box" style="background: #000; border: 1px solid #333;">🌙</div>
+      <div class="item-text">Dark Mode</div>
+      <div class="toggle" id="dark-toggle"><div class="toggle-circle"></div></div>
     </div>
-    <div class="list-item" onclick="toggleSwitch('wifi-toggle')">
+    
+    <div class="list-item">
       <div class="icon-box" style="background: #007aff;">📶</div>
       <div class="item-text">Wi-Fi</div>
-      <div class="right-text">Home_Network</div>
-      <div class="chevron">></div>
-    </div>
-    <div class="list-item" onclick="toggleSwitch('bt-toggle')">
-      <div class="icon-box" style="background: #007aff;">🎧</div>
-      <div class="item-text">Bluetooth</div>
-      <div class="right-text">On</div>
       <div class="chevron">></div>
     </div>
   </div>
 
-  <div style="margin: 0 0 8px 25px; font-size: 13px; color: #666; text-transform: uppercase;">Wallpaper</div>
+  <div style="margin: 0 0 8px 25px; font-size: 13px; color: var(--sub-text); text-transform: uppercase;">Wallpaper</div>
   <div class="wall-grid">
     <div class="wall-opt" style="background: linear-gradient(to bottom right, #ff7e5f, #feb47b);" onclick="wall('linear-gradient(to bottom right, #ff7e5f, #feb47b)')"></div>
     <div class="wall-opt" style="background: linear-gradient(to bottom right, #2193b0, #6dd5ed);" onclick="wall('linear-gradient(to bottom right, #2193b0, #6dd5ed)')"></div>
@@ -74,14 +85,34 @@
   <div class="list-group">
     <div class="list-item" onclick="reset()">
       <div class="icon-box" style="background: #ff3b30;">⚠️</div>
-      <div class="item-text" style="color: #ff3b30;">Erase All Content & Settings</div>
+      <div class="item-text" style="color: #ff3b30;">Erase All Content</div>
     </div>
   </div>
 
   <script>
-    function toggleSwitch(id) {
-      document.getElementById(id).classList.toggle('active');
+    // --- DARK MODE LOGIC ---
+    // Check if user previously turned it on
+    const isDark = localStorage.getItem('phoneDarkMode') === 'true';
+    if (isDark) {
+      document.body.classList.add('dark-mode');
+      document.getElementById('dark-toggle').classList.add('active');
     }
+
+    function toggleDarkMode() {
+      const body = document.body;
+      const toggleBtn = document.getElementById('dark-toggle');
+      
+      body.classList.toggle('dark-mode');
+      toggleBtn.classList.toggle('active');
+      
+      // Save their choice to memory
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('phoneDarkMode', 'true');
+      } else {
+        localStorage.setItem('phoneDarkMode', 'false');
+      }
+    }
+
     function wall(bg) { window.parent.document.getElementById('home-screen').style.background=bg; window.parent.document.getElementById('lock-screen').style.background=bg; localStorage.setItem('phoneWallpaper', bg); }
     function saveP() { let p = document.getElementById('pass').value; if(p.length===4&&!isNaN(p)){ localStorage.setItem('phonePasscode', p); window.parent.CORRECT_PASSCODE = p; alert("Passcode Saved!"); document.getElementById('pass').value=''; } else alert("Must be 4 numbers."); }
     function reset() { if(confirm("Erase EVERYTHING and reboot?")) { localStorage.clear(); window.parent.location.reload(); } }
