@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maps</title>
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  
+  <style>
+    body { margin: 0; padding: 0; font-family: -apple-system, sans-serif; height: 100vh; display: flex; flex-direction: column; }
+    
+    /* Overlay Header so it sits ON TOP of the map */
+    .header { position: absolute; top: 0; left: 0; width: 100%; padding: 50px 15px 15px; display: flex; align-items: center; z-index: 1000; pointer-events: none; }
+    
+    /* Blur effect for the back button to make it easy to read over the map */
+    .back-btn { background: rgba(255,255,255,0.8); padding: 8px 15px; border-radius: 20px; color: #007aff; font-weight: bold; cursor: pointer; pointer-events: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.2); backdrop-filter: blur(5px);}
+    
+    #map { flex-grow: 1; width: 100%; z-index: 1; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
+  </div>
+  
+  <div id="map"></div>
+
+  <script>
+    // 1. Initialize the map (starts zoomed out looking at the world)
+    var map = L.map('map').setView([20, 0], 2);
+
+    // 2. Load the street tiles from OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // 3. Ask the user's phone for their actual GPS location!
+    map.locate({setView: true, maxZoom: 16});
+
+    // 4. When location is found, put a blue marker there
+    function onLocationFound(e) {
+      var radius = e.accuracy / 2;
+      L.marker(e.latlng).addTo(map).bindPopup("You are within " + radius + " meters from this point").openPopup();
+      L.circle(e.latlng, radius).addTo(map);
+    }
+    map.on('locationfound', onLocationFound);
+
+    // If location is denied, just alert them
+    function onLocationError(e) {
+      alert("Could not find your location. You can still drag the map around!");
+    }
+    map.on('locationerror', onLocationError);
+  </script>
+</body>
+</html>
