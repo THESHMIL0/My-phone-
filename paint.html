@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paint Studio</title>
+  <style>
+    body { margin: 0; display: flex; flex-direction: column; height: 100vh; font-family: sans-serif; overflow: hidden; background: white; }
+    .header { padding: 50px 15px 15px; display: flex; justify-content: space-between; align-items: center; background: #f9f9f9; border-bottom: 1px solid #ddd; z-index: 10;}
+    .back-btn { color: #007aff; cursor: pointer; font-weight: bold; }
+    .clear-btn { color: #ff3b30; cursor: pointer; font-weight: bold; }
+    
+    /* Toolbar for colors */
+    .toolbar { display: flex; gap: 15px; padding: 15px; background: white; justify-content: center; border-bottom: 1px solid #ddd; z-index: 10; }
+    .color-btn { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+    .color-btn.active { border: 2px solid #000; transform: scale(1.1); }
+    
+    /* The actual canvas you draw on */
+    #drawing-canvas { flex-grow: 1; touch-action: none; /* Stops the screen from scrolling when you draw */ cursor: crosshair; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
+    <span>Paint 🎨</span>
+    <div class="clear-btn" onclick="clearCanvas()">Clear</div>
+  </div>
+
+  <div class="toolbar">
+    <div class="color-btn active" style="background: black;" onclick="setColor(this, 'black')"></div>
+    <div class="color-btn" style="background: red;" onclick="setColor(this, 'red')"></div>
+    <div class="color-btn" style="background: #007aff;" onclick="setColor(this, '#007aff')"></div>
+    <div class="color-btn" style="background: #34c759;" onclick="setColor(this, '#34c759')"></div>
+    <div class="color-btn" style="background: #ffcc00;" onclick="setColor(this, '#ffcc00')"></div>
+    <div class="color-btn" style="background: white; border: 1px solid #ccc;" onclick="setColor(this, 'white')">Eraser</div>
+  </div>
+
+  <canvas id="drawing-canvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('drawing-canvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let currentColor = 'black';
+
+    // Resize canvas to fit the remaining screen area
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight - 130; // Subtract header and toolbar height
+    }
+    window.onload = resizeCanvas;
+    window.onresize = resizeCanvas;
+
+    function setColor(element, color) {
+      currentColor = color;
+      // Remove active class from all buttons, add to the one clicked
+      document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Helper to get exact X/Y whether it's a mouse or a touch
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function startDraw(e) {
+      isDrawing = true;
+      const pos = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      e.preventDefault(); // Stop scrolling!
+      const pos = getPos(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.strokeStyle = currentColor;
+      ctx.lineWidth = currentColor === 'white' ? 20 : 5; // Eraser is thicker
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+    }
+
+    function stopDraw() {
+      isDrawing = false;
+    }
+
+    // Mouse Events
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDraw);
+    canvas.addEventListener('mouseout', stopDraw);
+
+    // Touch Events for Mobile
+    canvas.addEventListener('touchstart', startDraw);
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', stopDraw);
+  </script>
+</body>
+</html>
