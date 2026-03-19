@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#000000">
   <title>My Phone OS</title>
   <style>
-    body { margin: 0; padding: 0; overflow: hidden; background-color: #000; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; padding: 0; overflow: hidden; background-color: #000; font-family: -apple-system, sans-serif; }
 
     #boot-screen, #loading-screen { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background: #000; color: white; z-index: 100; flex-direction: column; }
     .boot-logo { font-size: 80px; margin-bottom: 40px; animation: pulse 1.5s infinite alternate; }
@@ -16,7 +16,7 @@
     @keyframes pulse { 0% { opacity: 0.6; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1.05); } }
     @keyframes loadBoot { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }
 
-    #lock-screen { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(to bottom right, #ff7e5f, #feb47b); z-index: 80; flex-direction: column; align-items: center; color: white; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
+    #lock-screen { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(to bottom right, #ff7e5f, #feb47b); z-index: 80; flex-direction: column; align-items: center; color: white; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
     .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); z-index: -1; backdrop-filter: blur(2px);}
     .lock-time { font-size: 75px; font-weight: 200; margin-top: 80px; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);}
     .lock-prompt { margin-top: auto; font-size: 16px; margin-bottom: 20px; font-weight: 500;}
@@ -29,7 +29,10 @@
     .lock-btn { width: 70px; height: 70px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; justify-content: center; align-items: center; font-size: 32px; color: white; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(10px);}
     .lock-btn:active { background: rgba(255,255,255,0.4); transform: scale(0.9); }
 
-    #home-screen { display: none; width: 100vw; height: 100vh; background: linear-gradient(to bottom right, #ff7e5f, #feb47b); position: relative; }
+    /* --- NEW: CINEMATIC BLUR UNLOCK --- */
+    #home-screen { display: none; width: 100vw; height: 100vh; background: linear-gradient(to bottom right, #ff7e5f, #feb47b); position: relative; filter: blur(20px); transform: scale(1.1); transition: filter 0.7s ease-out, transform 0.7s ease-out; }
+    #home-screen.unlocked { filter: blur(0); transform: scale(1); }
+    
     .notch { width: 140px; height: 32px; background: #000; border-radius: 0 0 16px 16px; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 101; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; justify-content: center; align-items: center; color: #ff9f0a; font-weight: bold; font-family: monospace; font-size: 14px; overflow: hidden; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
     .notch.expanded { width: 220px; height: 45px; border-radius: 22px; top: 10px; }
     .notch-text { opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
@@ -42,7 +45,6 @@
     .app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px 15px; padding: 40px 15px; }
     @keyframes appPopIn { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
     .app-container { display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0; animation: appPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-    
     .app-container:nth-child(1) { animation-delay: 0.05s; } .app-container:nth-child(2) { animation-delay: 0.1s; }
     .app-container:nth-child(3) { animation-delay: 0.15s; } .app-container:nth-child(4) { animation-delay: 0.2s; }
     .app-container:nth-child(5) { animation-delay: 0.25s; } .app-container:nth-child(6) { animation-delay: 0.3s; }
@@ -54,8 +56,11 @@
     .widget-date { font-size: 14px; color: rgba(255,255,255,0.8); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
     .widget-weather { font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 8px; margin-bottom: -5px;}
 
-    .app-icon { width: 62px; height: 62px; background: rgba(255, 255, 255, 0.95); border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 34px; box-shadow: 0 6px 15px rgba(0,0,0,0.15); transition: transform 0.2s; }
+    /* --- NEW: RIPPLE EFFECT STYLES --- */
+    .app-icon { width: 62px; height: 62px; background: rgba(255, 255, 255, 0.95); border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 34px; box-shadow: 0 6px 15px rgba(0,0,0,0.15); transition: transform 0.2s; position: relative; overflow: hidden; pointer-events: auto;}
     .app-container:active .app-icon { transform: scale(0.85); filter: brightness(0.8); }
+    .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-anim 0.6s linear; background-color: rgba(255, 255, 255, 0.7); pointer-events: none; }
+    @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
     .app-name { color: white; font-size: 12px; margin-top: 6px; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.6); pointer-events: none;}
     .hidden-app { display: none !important; }
 
@@ -64,27 +69,25 @@
     .notif-title { font-size: 28px; font-weight: bold; margin-bottom: 25px; letter-spacing: -0.5px;}
     .notif-card { background: rgba(255,255,255,0.2); border-radius: 18px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);}
     .notif-card-header { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 8px; font-weight: 600; display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 0.5px;}
-    .notif-card-body { font-size: 15px; line-height: 1.4;}
 
     #app-switcher { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); z-index: 97; flex-direction: row; align-items: center; overflow-x: auto; padding: 30px; box-sizing: border-box; gap: 25px; scroll-snap-type: x mandatory;}
     .switcher-card { min-width: 220px; height: 450px; background: white; border-radius: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 60px; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.4); transform: scale(0.95); transition: transform 0.2s; scroll-snap-align: center;}
     .switcher-card:active { transform: scale(0.9); }
     .close-app-btn { position: absolute; top: -15px; right: -15px; background: #ff3b30; color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 2px solid white;}
 
-    #app-window { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 95; transform: translateY(100%); opacity: 0; pointer-events: none; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s; border-radius: 0; }
-    #app-window.open { transform: translateY(0); opacity: 1; pointer-events: auto; border-radius: 0;}
+    /* --- NEW: SPRINGY APP WINDOW --- */
+    #app-window { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 95; transform: translateY(100%) scale(0.9); opacity: 0; pointer-events: none; transition: transform 0.5s cubic-bezier(0.32, 1.15, 0.25, 1), opacity 0.3s, border-radius 0.3s; border-radius: 40px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);}
+    #app-window.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; border-radius: 0;}
     #app-frame { width: 100%; height: 100%; border: none; }
     .home-bar { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); width: 140px; height: 6px; background: #111; border-radius: 10px; cursor: pointer; z-index: 100; transition: background 0.3s, transform 0.2s;}
     .home-bar:active { background: #555; transform: translateX(-50%) scaleY(1.5);}
   </style>
 </head>
 <body>
-
   <div id="boot-screen" onclick="powerOn()">Tap to Power On ⚡</div>
   <div id="loading-screen"><div class="boot-logo">📱</div><div class="loading-bar-container"><div class="loading-bar-fill"></div></div></div>
 
   <div class="notch" id="dynamic-island"><span class="notch-text" id="notch-text"></span></div>
-  
   <div class="status-bar" id="status-bar">
     <div class="status-left" onclick="toggleNotifications()"><span id="small-clock">12:00</span></div>
     <div class="status-right" onclick="alert('Control Center Coming Soon!')">📶 <span id="battery-display">🔋 100%</span></div>
@@ -92,14 +95,7 @@
 
   <div id="notification-center">
     <div class="notif-title">Notifications</div>
-    <div class="notif-card">
-      <div class="notif-card-header"><span>💬 Messages</span><span>Now</span></div>
-      <div class="notif-card-body"><strong>AI Bot:</strong> Your Settings app looks incredibly realistic now! 😸</div>
-    </div>
-    <div class="notif-card">
-      <div class="notif-card-header"><span>⚙️ System</span><span>1m ago</span></div>
-      <div class="notif-card-body">Software Update Complete. OS Version 6.0 installed.</div>
-    </div>
+    <div class="notif-card"><div class="notif-card-header"><span>💬 Messages</span><span>Now</span></div><div><strong>AI Bot:</strong> Loving the new Ripple animations! 🌊</div></div>
     <div class="home-bar" style="background: white; bottom: 20px;" onclick="toggleNotifications()"></div>
   </div>
 
@@ -121,25 +117,19 @@
   <div id="home-screen">
     <div class="app-grid" id="app-grid">
       <div class="widget-2x2" onclick="openApp('weather.html', 'Weather', '🌤️')">
-        <div>
-          <div class="widget-date" id="widget-date">MONDAY, JAN 1</div>
-          <div class="widget-time" id="widget-time">12:00</div>
-        </div>
+        <div><div class="widget-date" id="widget-date">MONDAY, JAN 1</div><div class="widget-time" id="widget-time">12:00</div></div>
         <div class="widget-weather">🌤️ 72° • Local</div>
       </div>
-
       <div class="app-container" onclick="openApp('messages.html', 'Messages', '💬')"><div class="app-icon">💬</div><div class="app-name">Messages</div></div>
       <div class="app-container" onclick="openApp('browser.html', 'Browser', '🌐')"><div class="app-icon">🌐</div><div class="app-name">Browser</div></div>
       <div class="app-container" onclick="openApp('gallery.html', 'Gallery', '🖼️')"><div class="app-icon" style="background: linear-gradient(to bottom right, #ff0844, #ffb199); color: white;">🖼️</div><div class="app-name">Gallery</div></div>
       <div class="app-container" onclick="openApp('clock.html', 'Clock', '⏱️')"><div class="app-icon" style="background: #000; color: #ff9f0a;">⏱️</div><div class="app-name">Clock</div></div>
       <div class="app-container" onclick="openApp('music.html', 'Music', '🎵')"><div class="app-icon" style="background: #ff0844; color: white;">🎵</div><div class="app-name">Music</div></div>
       <div class="app-container" onclick="openApp('appstore.html', 'App Store', '🛒')"><div class="app-icon" style="background: #007aff; color: white;">🛒</div><div class="app-name">App Store</div></div>
-      
       <div class="app-container hidden-app" id="app-paint" onclick="openApp('paint.html', 'Paint', '🎨')"><div class="app-icon" style="background: #ffcc00;">🎨</div><div class="app-name">Paint</div></div>
       <div class="app-container hidden-app" id="app-snake" onclick="openApp('snake.html', 'Snake', '🐍')"><div class="app-icon" style="background: #34c759; color: white;">🐍</div><div class="app-name">Snake</div></div>
       <div class="app-container hidden-app" id="app-piano" onclick="openApp('piano.html', 'Piano', '🎹')"><div class="app-icon" style="background: #fff; border: 1px solid #ccc;">🎹</div><div class="app-name">Piano</div></div>
       <div class="app-container hidden-app" id="app-videotube" onclick="openApp('videotube.html', 'VideoTube', '🎬')"><div class="app-icon" style="background: #ff0000; color: white;">🎬</div><div class="app-name">VideoTube</div></div>
-      
       <div class="app-container" onclick="openApp('settings.html', 'Settings', '⚙️')"><div class="app-icon" style="background: #8e8e93; color: white;">⚙️</div><div class="app-name">Settings</div></div>
     </div>
   </div>
@@ -148,54 +138,34 @@
     <iframe id="app-frame" src=""></iframe>
     <div class="home-bar" onclick="closeApp()" ondblclick="openAppSwitcher()"></div>
   </div>
+
   <script>
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-    
-    // --- PWA INSTALLATION BRAIN ---
     let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      console.log("PWA Install Ready");
-    });
-
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
     function triggerInstall() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('User accepted the install prompt');
-          }
-          deferredPrompt = null;
-        });
-      } else {
-        alert("App is already installed, or your browser doesn't support automatic installation (Safari users: Tap the Share icon and 'Add to Home Screen').");
-      }
+      if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => deferredPrompt = null); } 
+      else alert("Already installed, or unsupported browser.");
     }
 
     const savedWallpaper = localStorage.getItem('phoneWallpaper');
     if (savedWallpaper) { document.getElementById('home-screen').style.background = savedWallpaper; document.getElementById('lock-screen').style.background = savedWallpaper; }
     
-    if (localStorage.getItem('own_paint') === 'true') document.getElementById('app-paint').classList.remove('hidden-app');
-    if (localStorage.getItem('own_snake') === 'true') document.getElementById('app-snake').classList.remove('hidden-app');
-    if (localStorage.getItem('own_piano') === 'true') document.getElementById('app-piano').classList.remove('hidden-app');
-    if (localStorage.getItem('own_videotube') === 'true') document.getElementById('app-videotube').classList.remove('hidden-app');
+    ['paint', 'snake', 'piano', 'videotube'].forEach(app => {
+      if(localStorage.getItem('own_' + app) === 'true') document.getElementById('app-' + app).classList.remove('hidden-app');
+    });
 
     let recentApps = []; 
     function toggleNotifications() { document.getElementById('notification-center').classList.toggle('open'); }
     function openAppSwitcher() {
       if(recentApps.length === 0) return; 
-      const switcher = document.getElementById('app-switcher');
-      switcher.innerHTML = ''; 
-      recentApps.forEach((app, index) => {
-        const card = document.createElement('div');
-        card.className = 'switcher-card';
-        card.innerHTML = `<div class="close-app-btn" onclick="closeFromSwitcher(${index}, event)">✕</div><div style="font-size: 80px;">${app.icon}</div><div style="font-size: 22px; font-weight: bold; margin-top: 15px; color: black;">${app.name}</div>`;
-        card.onclick = () => openApp(app.url, app.name, app.icon);
-        switcher.appendChild(card);
+      const switcher = document.getElementById('app-switcher'); switcher.innerHTML = ''; 
+      recentApps.forEach((app, i) => {
+        const card = document.createElement('div'); card.className = 'switcher-card';
+        card.innerHTML = `<div class="close-app-btn" onclick="closeFromSwitcher(${i}, event)">✕</div><div style="font-size: 80px;">${app.icon}</div><div style="font-size: 22px; font-weight: bold; margin-top: 15px; color: black;">${app.name}</div>`;
+        card.onclick = () => openApp(app.url, app.name, app.icon); switcher.appendChild(card);
       });
-      switcher.style.display = 'flex';
-      document.getElementById('app-window').classList.remove('open');
+      switcher.style.display = 'flex'; document.getElementById('app-window').classList.remove('open');
     }
     function closeFromSwitcher(index, event) {
       event.stopPropagation(); recentApps.splice(index, 1); openAppSwitcher(); 
@@ -203,8 +173,7 @@
     }
 
     function powerOn() {
-      let elem = document.documentElement;
-      if (elem.requestFullscreen) elem.requestFullscreen();
+      let elem = document.documentElement; if (elem.requestFullscreen) elem.requestFullscreen();
       document.getElementById('boot-screen').style.opacity = '0';
       setTimeout(() => {
         document.getElementById('boot-screen').style.display = 'none';
@@ -217,20 +186,15 @@
     }
     
     function updateClock() {
-      const now = new Date(); let hours = now.getHours(), minutes = now.getMinutes();
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-      const timeStr = hours + ':' + minutes;
-      document.getElementById('small-clock').textContent = timeStr;
-      document.getElementById('big-clock').textContent = timeStr;
-      document.getElementById('widget-time').textContent = timeStr;
-      const days = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
-      const months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+      const now = new Date(); let h = now.getHours(), m = now.getMinutes(); m = m < 10 ? '0'+m : m;
+      document.getElementById('small-clock').textContent = h+':'+m;
+      document.getElementById('big-clock').textContent = h+':'+m; document.getElementById('widget-time').textContent = h+':'+m;
+      const days = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"], months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
       document.getElementById('widget-date').textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
     }
     updateClock(); setInterval(updateClock, 1000);
 
-    var CORRECT_PASSCODE = localStorage.getItem('phonePasscode') || "1234";
-    let enteredPasscode = "";
+    var CORRECT_PASSCODE = localStorage.getItem('phonePasscode') || "1234"; let enteredPasscode = "";
     function pressLockKey(num) {
       if (enteredPasscode.length < 4) { enteredPasscode += num; updateDots(); }
       if (enteredPasscode.length === 4) setTimeout(checkPasscode, 200);
@@ -242,28 +206,57 @@
     function checkPasscode() {
       if (enteredPasscode === CORRECT_PASSCODE) {
         document.getElementById('lock-screen').style.transform = 'translateY(-100%)';
+        
+        // NEW: Trigger the blur-fade unlock animation!
+        setTimeout(() => document.getElementById('home-screen').classList.add('unlocked'), 100);
+
         setTimeout(() => {
           document.getElementById('lock-screen').style.display = 'none';
           document.getElementById('lock-screen').style.transform = 'translateY(0)';
           document.getElementById('home-screen').style.display = 'block';
-        }, 400);
-        enteredPasscode = ""; updateDots();
-      } else { enteredPasscode = ""; updateDots(); }
+        }, 600);
+      } else {
+        const dots = document.getElementById('dots-container'), prompt = document.getElementById('lock-prompt');
+        prompt.innerText = "Wrong Passcode"; dots.classList.add('shake-animation');
+        setTimeout(() => { dots.classList.remove('shake-animation'); prompt.innerText = "Enter Passcode"; updateDots(); }, 400);
+      }
+      enteredPasscode = "";
     }
+
+    // --- NEW: RIPPLE ANIMATION TRIGGER ---
+    document.querySelectorAll('.app-icon').forEach(icon => {
+      icon.addEventListener('pointerdown', function(e) {
+        let ripple = document.createElement('span'); ripple.classList.add('ripple');
+        let rect = this.getBoundingClientRect(); let size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = e.clientX - rect.left - size/2 + 'px';
+        ripple.style.top = e.clientY - rect.top - size/2 + 'px';
+        this.appendChild(ripple); setTimeout(() => ripple.remove(), 600);
+      });
+    });
 
     function openApp(appUrl, appName, appIcon) {
       if(appName && !recentApps.some(app => app.name === appName)) recentApps.push({url: appUrl, name: appName, icon: appIcon});
       document.getElementById('app-switcher').style.display = 'none'; 
-      document.getElementById('app-frame').src = appUrl;
-      document.getElementById('app-window').classList.add('open');
-      if(localStorage.getItem('phoneDarkMode') === 'true') { document.getElementById('status-bar').style.color = 'white'; } else { document.getElementById('status-bar').style.color = 'black'; }
+      
+      // Slight delay to let the ripple animation play!
+      setTimeout(() => {
+        document.getElementById('app-frame').src = appUrl;
+        document.getElementById('app-window').classList.add('open');
+        if(localStorage.getItem('phoneDarkMode') === 'true') { document.getElementById('status-bar').style.color = 'white'; } else { document.getElementById('status-bar').style.color = 'black'; }
+      }, 150);
     }
+
     function closeApp() {
       document.getElementById('app-window').classList.remove('open');
-      setTimeout(() => { document.getElementById('app-frame').src = ""; }, 400); 
+      setTimeout(() => { document.getElementById('app-frame').src = ""; }, 500); 
       document.getElementById('status-bar').style.color = 'white'; 
     }
     function installApp(appId) { document.getElementById(appId).classList.remove('hidden-app'); }
+    function updateNotch(text, isActive) {
+      const island = document.getElementById('dynamic-island'), notchText = document.getElementById('notch-text');
+      if (isActive) { island.classList.add('expanded'); notchText.innerText = "⏱️ " + text; } else { island.classList.remove('expanded'); notchText.innerText = ""; }
+    }
   </script>
 </body>
 </html>
