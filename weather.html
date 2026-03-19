@@ -5,7 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weather</title>
   <style>
-    body { margin: 0; font-family: -apple-system, sans-serif; height: 100vh; background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%); color: white; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+    body { margin: 0; font-family: -apple-system, sans-serif; height: 100vh; color: white; display: flex; flex-direction: column; align-items: center; overflow: hidden; transition: background 1s; }
+    
+    /* Dynamic Backgrounds! */
+    .sunny { background: linear-gradient(to bottom, #4facfe, #00f2fe); }
+    .rainy { background: linear-gradient(to bottom, #5c6670, #283048); }
+    .night { background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); }
+    
     .header { width: 100%; padding: 50px 15px 10px; display: flex; align-items: center; position: relative; }
     .back-btn { position: absolute; left: 15px; color: white; font-weight: bold; cursor: pointer; z-index: 10;}
     
@@ -13,13 +19,11 @@
     .temp { font-size: 90px; font-weight: 200; margin-top: -10px; }
     .desc { font-size: 20px; text-transform: capitalize; }
     
-    .icon-container { font-size: 120px; margin: 20px 0; position: relative; animation: float 3s ease-in-out infinite; text-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+    .icon-container { font-size: 120px; margin: 20px 0; animation: float 3s ease-in-out infinite; text-shadow: 0 10px 20px rgba(0,0,0,0.2); }
     @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-
-    .loading { font-size: 18px; margin-top: 50px; text-align: center; }
   </style>
 </head>
-<body>
+<body class="sunny" id="weather-body">
   <div class="header"><div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div></div>
   
   <div class="city" id="location-text">Locating...</div>
@@ -28,29 +32,34 @@
   <div class="desc" id="description">Fetching Live Data</div>
 
   <script>
-    // 1. Get User's Location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(position => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        
+        const lat = position.coords.latitude; const lon = position.coords.longitude;
         document.getElementById('location-text').innerText = "Current Location";
 
-        // 2. Fetch the live weather from a free API using their coordinates!
         fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit`)
-          .then(response => response.json())
+          .then(res => res.json())
           .then(data => {
             const temp = Math.round(data.current_weather.temperature);
+            const isDay = data.current_weather.is_day;
+            const code = data.current_weather.weathercode;
+            
             document.getElementById('temperature').innerText = temp + "°";
-            document.getElementById('description').innerText = "Live API Data";
-            document.getElementById('weather-icon').innerText = "⛅";
-          })
-          .catch(err => {
-            document.getElementById('description').innerText = "Error loading data.";
+            
+            let bgClass = 'sunny';
+            let icon = '☀️';
+            let desc = 'Clear';
+
+            // Check if raining/cloudy/night
+            if (code > 40) { bgClass = 'rainy'; icon = '🌧️'; desc = 'Raining'; }
+            else if (code > 0) { icon = '⛅'; desc = 'Partly Cloudy'; }
+            
+            if (isDay === 0) { bgClass = 'night'; if(code <= 40) icon = '🌙'; }
+
+            document.getElementById('weather-body').className = bgClass;
+            document.getElementById('weather-icon').innerText = icon;
+            document.getElementById('description').innerText = desc;
           });
-      }, error => {
-        document.getElementById('location-text').innerText = "Location Denied";
-        document.getElementById('description').innerText = "Please allow location access.";
       });
     }
   </script>
