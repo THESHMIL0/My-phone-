@@ -3,107 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Camera</title>
+  <title>Camera Pro</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: black; /* Cameras usually have black backgrounds */
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      font-family: sans-serif;
-    }
+    body { margin: 0; background: black; height: 100vh; display: flex; flex-direction: column; font-family: sans-serif; }
+    .header { padding: 50px 15px 15px; display: flex; justify-content: space-between; color: white; z-index: 10;}
+    .back-btn { color: #ffd60a; cursor: pointer; }
+    .filter-btn { color: white; cursor: pointer; font-size: 20px; }
+    
+    #cam { width: 100%; flex-grow: 1; background: #222; object-fit: cover; transition: filter 0.3s;}
+    
+    /* We use a hidden canvas to draw the photo so we can download it */
+    #photo-canvas { display: none; }
 
-    .header {
-      padding-top: 50px; 
-      padding-bottom: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      color: white;
-      font-size: 20px;
-    }
-
-    .back-btn {
-      position: absolute;
-      left: 15px;
-      color: #ffd60a; /* Yellow back button for the camera */
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    /* The actual video feed */
-    #camera-feed {
-      width: 100%;
-      flex-grow: 1;
-      background-color: #222;
-      object-fit: cover; /* Makes sure the video fills the space perfectly */
-    }
-
-    /* The bottom control area */
-    .controls {
-      height: 120px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding-bottom: 20px;
-    }
-
-    /* The big white shutter button */
-    .shutter-btn {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background-color: white;
-      border: 4px solid #ccc;
-      cursor: pointer;
-    }
-
-    .shutter-btn:active {
-      background-color: #ddd; /* Darkens slightly when pressed */
-    }
+    .controls { height: 120px; display: flex; justify-content: center; align-items: center; padding-bottom: 20px; position: relative;}
+    .shutter { width: 70px; height: 70px; border-radius: 50%; background: white; border: 4px solid #ccc; cursor: pointer; }
+    .shutter:active { background: #ddd; }
   </style>
 </head>
 <body>
-
   <div class="header">
     <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
-    <span>Camera</span>
+    <div class="filter-btn" onclick="changeFilter()">✨ Filter</div>
   </div>
-
-  <video id="camera-feed" autoplay playsinline></video>
+  
+  <video id="cam" autoplay playsinline></video>
+  <canvas id="photo-canvas"></canvas>
 
   <div class="controls">
-    <div class="shutter-btn" onclick="takePhoto()"></div>
+    <div class="shutter" onclick="takePhoto()"></div>
   </div>
 
   <script>
-    // --- JAVASCRIPT: Accessing the real camera ---
+    const video = document.getElementById('cam');
+    const canvas = document.getElementById('photo-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // An array of cool CSS filters
+    const filters = ['none', 'grayscale(100%)', 'sepia(100%)', 'invert(100%)', 'hue-rotate(90deg)'];
+    let currentFilter = 0;
 
-    const videoElement = document.getElementById('camera-feed');
-
-    // Ask the browser for permission to use the back camera
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-      .then(function(stream) {
-        // If the user says "Allow", attach the camera stream to our video element
-        videoElement.srcObject = stream;
-      })
-      .catch(function(error) {
-        // If they deny permission or don't have a camera
-        console.error("Camera error: ", error);
-        alert("Could not access the camera. Make sure you grant permission!");
-      });
+      .then(s => video.srcObject = s).catch(e => console.log(e));
 
-    // A fun little function to make the screen flash when you take a picture
+    function changeFilter() {
+      currentFilter++;
+      if(currentFilter >= filters.length) currentFilter = 0;
+      video.style.filter = filters[currentFilter];
+    }
+
     function takePhoto() {
-      document.body.style.backgroundColor = "white";
-      setTimeout(() => {
-        document.body.style.backgroundColor = "black";
-      }, 100);
+      // Flash effect
+      document.body.style.background = "white"; 
+      setTimeout(()=>document.body.style.background = "black", 100);
+
+      // Make canvas the exact same size as the video feed
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      // Apply the selected filter to the canvas context
+      ctx.filter = filters[currentFilter];
+      
+      // Draw the video frame onto the canvas
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Convert the canvas into a real image file!
+      const imageDataUrl = canvas.toDataURL('image/jpeg');
+
+      // Create a fake link, click it, and download the photo!
+      const a = document.createElement('a');
+      a.href = imageDataUrl;
+      a.download = 'my-phone-photo.jpg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
   </script>
-
 </body>
 </html>
