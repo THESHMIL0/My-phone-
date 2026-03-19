@@ -26,9 +26,9 @@
 
   <div class="store-list">
     <div class="app-card">
-      <div class="app-icon" style="background: linear-gradient(to right, #ff00cc, #333399); color: white;">🎙️</div>
-      <div class="app-info"><div class="app-title">Voice Assistant</div><div class="app-desc">Talk to your phone!</div></div>
-      <button class="get-btn" id="btn-assistant" onclick="install('assistant')">GET</button>
+      <div class="app-icon" style="background: #ff0000; color: white;">🎬</div>
+      <div class="app-info"><div class="app-title">VideoTube</div><div class="app-desc">Watch mini movies!</div></div>
+      <button class="get-btn" id="btn-videotube" onclick="install('videotube')">GET</button>
     </div>
 
     <div class="app-card">
@@ -51,13 +51,11 @@
   </div>
 
   <script>
-    // Check ownership on load
-    const apps = ['assistant', 'paint', 'snake', 'piano'];
+    const apps = ['videotube', 'paint', 'snake', 'piano'];
     apps.forEach(app => {
       if(localStorage.getItem('own_' + app) === 'true') {
         const btn = document.getElementById('btn-' + app);
-        btn.innerText = 'OPEN';
-        btn.classList.add('owned');
+        btn.innerText = 'OPEN'; btn.classList.add('owned');
       }
     });
 
@@ -68,8 +66,7 @@
       btn.innerText = 'WAIT...';
       setTimeout(() => {
         localStorage.setItem('own_' + app, 'true');
-        btn.innerText = 'OPEN';
-        btn.classList.add('owned');
+        btn.innerText = 'OPEN'; btn.classList.add('owned');
         if(window.parent.installApp) {
           window.parent.installApp('app-' + app);
           alert(app.toUpperCase() + " installed to your Home Screen!");
