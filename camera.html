@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera Pro</title>
+  <style>
+    body { margin: 0; background: black; height: 100vh; display: flex; flex-direction: column; font-family: sans-serif; }
+    .header { padding: 50px 15px 15px; display: flex; justify-content: space-between; color: white; z-index: 10;}
+    .back-btn { color: #ffd60a; cursor: pointer; font-weight: bold;}
+    .filter-btn { color: white; cursor: pointer; font-size: 18px; font-weight: bold;}
+    
+    #cam { width: 100%; flex-grow: 1; background: #222; object-fit: cover; transition: filter 0.3s;}
+    #photo-canvas { display: none; }
+
+    .controls { height: 120px; display: flex; justify-content: center; align-items: center; padding-bottom: 20px;}
+    .shutter { width: 70px; height: 70px; border-radius: 50%; background: white; border: 4px solid #ccc; cursor: pointer; }
+    .shutter:active { background: #ddd; transform: scale(0.95);}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
+    <div class="filter-btn" onclick="changeFilter()">✨ Filter</div>
+  </div>
+  
+  <video id="cam" autoplay playsinline></video>
+  <canvas id="photo-canvas"></canvas>
+
+  <div class="controls"><div class="shutter" onclick="takePhoto()"></div></div>
+
+  <script>
+    const video = document.getElementById('cam');
+    const canvas = document.getElementById('photo-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    const filters = ['none', 'grayscale(100%)', 'sepia(100%)', 'invert(100%)'];
+    let currentFilter = 0;
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(s => video.srcObject = s).catch(e => console.log(e));
+
+    function changeFilter() {
+      currentFilter++;
+      if(currentFilter >= filters.length) currentFilter = 0;
+      video.style.filter = filters[currentFilter];
+    }
+
+    function takePhoto() {
+      document.body.style.background = "white"; 
+      setTimeout(()=>document.body.style.background = "black", 100);
+
+      canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+      ctx.filter = filters[currentFilter];
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // SAVE TO OS MEMORY INSTEAD OF DOWNLOADING!
+      // 0.7 compresses the image so we don't run out of memory
+      const imageDataUrl = canvas.toDataURL('image/jpeg', 0.7); 
+      
+      let osPhotos = JSON.parse(localStorage.getItem('os_photos')) || [];
+      osPhotos.push(imageDataUrl);
+      localStorage.setItem('os_photos', JSON.stringify(osPhotos));
+      
+      alert("Saved to Gallery!");
+    }
+  </script>
+</body>
+</html>
