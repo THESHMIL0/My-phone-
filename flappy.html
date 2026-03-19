@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Flappy</title>
+  <style>
+    body { margin: 0; background: #70c5ce; overflow: hidden; display: flex; flex-direction: column; height: 100vh;}
+    .header { padding: 40px 15px 10px; z-index: 10; display: flex; justify-content: space-between; position: absolute; width: 100%; box-sizing: border-box;}
+    .back-btn { color: white; font-weight: bold; cursor: pointer; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);}
+    #game { flex-grow: 1; touch-action: none; display: block;}
+    .score-board { color: white; font-weight: bold; font-size: 24px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); font-family: sans-serif;}
+  </style>
+</head>
+<body onclick="jump()">
+  <div class="header">
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Quit</div>
+    <div class="score-board" id="score">0</div>
+  </div>
+  <canvas id="game"></canvas>
+
+  <script>
+    const cvs = document.getElementById("game"); const ctx = cvs.getContext("2d");
+    cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+    
+    let frames = 0, score = 0;
+    const bird = { x: 50, y: 150, w: 30, h: 30, gravity: 0.5, jump: 7.5, velocity: 0 };
+    const pipes = []; const pipeW = 50; const pipeGap = 160;
+
+    function jump() { bird.velocity = -bird.jump; }
+
+    function draw() {
+      // Background
+      ctx.fillStyle = "#70c5ce"; ctx.fillRect(0, 0, cvs.width, cvs.height);
+      
+      // Bird Physics
+      bird.velocity += bird.gravity; bird.y += bird.velocity;
+      ctx.fillStyle = "#ffcc00"; ctx.fillRect(bird.x, bird.y, bird.w, bird.h);
+      
+      // Generate Pipes
+      if (frames % 100 === 0) {
+        let topY = Math.random() * (cvs.height - pipeGap - 150) + 30;
+        pipes.push({ x: cvs.width, top: topY, bottom: topY + pipeGap, passed: false });
+      }
+      
+      // Draw & Move Pipes
+      ctx.fillStyle = "#28a745";
+      for (let i = 0; i < pipes.length; i++) {
+        let p = pipes[i]; p.x -= 3; // Game Speed
+        
+        ctx.fillRect(p.x, 0, pipeW, p.top);
+        ctx.fillRect(p.x, p.bottom, pipeW, cvs.height - p.bottom);
+        
+        // Score logic
+        if (p.x + pipeW < bird.x && !p.passed) { score++; document.getElementById('score').innerText = score; p.passed = true; }
+        
+        // Collision logic
+        if (bird.x < p.x + pipeW && bird.x + bird.w > p.x && (bird.y < p.top || bird.y + bird.h > p.bottom) || bird.y + bird.h >= cvs.height || bird.y < 0) {
+          alert("Game Over! Score: " + score);
+          bird.y = 150; bird.velocity = 0; pipes.length = 0; score = 0; document.getElementById('score').innerText = 0;
+        }
+      }
+      frames++; requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
+</body>
+</html>
