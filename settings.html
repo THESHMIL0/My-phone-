@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Settings</title>
   <style>
-    /* CSS VARIABLES: This is the secret to Dark Mode! */
     :root {
       --bg-color: #f2f2f7;
       --card-bg: white;
@@ -14,7 +13,6 @@
       --border-color: #f2f2f7;
     }
 
-    /* When dark-mode class is added to body, we flip the variables! */
     body.dark-mode {
       --bg-color: #000;
       --card-bg: #1c1c1e;
@@ -24,7 +22,10 @@
     }
 
     body { margin: 0; background: var(--bg-color); color: var(--text-color); font-family: -apple-system, sans-serif; height: 100vh; overflow-y: auto; transition: background 0.3s, color 0.3s; }
-    .header { padding: 50px 15px 15px; display: flex; justify-content: center; font-size: 30px; font-weight: bold; transition: background 0.3s; }
+    
+    /* FIXED THE HEADER: Added positioning so the back button fits perfectly */
+    .header { padding: 50px 15px 15px; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; transition: background 0.3s; position: relative; }
+    .back-btn { position: absolute; left: 15px; color: #007aff; cursor: pointer; font-size: 16px; font-weight: normal; }
     
     .list-group { background: var(--card-bg); border-radius: 12px; margin: 0 15px 25px; overflow: hidden; transition: background 0.3s; }
     .list-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; }
@@ -34,7 +35,6 @@
     .item-text { flex-grow: 1; font-size: 16px; }
     .chevron { color: var(--sub-text); font-size: 16px; font-weight: bold; }
 
-    /* Custom Toggle Switch Animation */
     .toggle { width: 50px; height: 30px; background: #38383a; border-radius: 30px; position: relative; transition: background 0.3s; cursor: pointer; }
     .toggle.active { background: #34c759; }
     .toggle-circle { width: 26px; height: 26px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.3s; }
@@ -49,7 +49,10 @@
   </style>
 </head>
 <body>
-  <div class="header">Settings</div>
+  <div class="header">
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
+    Settings
+  </div>
 
   <div class="list-group">
     <div class="list-item" onclick="toggleDarkMode()">
@@ -90,8 +93,6 @@
   </div>
 
   <script>
-    // --- DARK MODE LOGIC ---
-    // Check if user previously turned it on
     const isDark = localStorage.getItem('phoneDarkMode') === 'true';
     if (isDark) {
       document.body.classList.add('dark-mode');
@@ -101,16 +102,9 @@
     function toggleDarkMode() {
       const body = document.body;
       const toggleBtn = document.getElementById('dark-toggle');
-      
       body.classList.toggle('dark-mode');
       toggleBtn.classList.toggle('active');
-      
-      // Save their choice to memory
-      if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('phoneDarkMode', 'true');
-      } else {
-        localStorage.setItem('phoneDarkMode', 'false');
-      }
+      localStorage.setItem('phoneDarkMode', body.classList.contains('dark-mode') ? 'true' : 'false');
     }
 
     function wall(bg) { window.parent.document.getElementById('home-screen').style.background=bg; window.parent.document.getElementById('lock-screen').style.background=bg; localStorage.setItem('phoneWallpaper', bg); }
