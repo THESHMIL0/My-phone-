@@ -5,74 +5,75 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>App Store</title>
   <style>
-    body { margin: 0; font-family: -apple-system, sans-serif; height: 100vh; background: white; display: flex; flex-direction: column; }
-    .header { padding: 50px 15px 15px; font-size: 30px; font-weight: bold; border-bottom: 1px solid #eee; }
-    .back-btn { color: #007aff; cursor: pointer; font-size: 16px; font-weight: normal; margin-bottom: 10px; }
-    .store-list { padding: 20px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; padding-bottom: 50px;}
-    .app-card { display: flex; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 20px; }
-    .app-icon { width: 60px; height: 60px; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-size: 30px; margin-right: 15px; }
+    body { margin: 0; font-family: -apple-system, sans-serif; background: #fff; color: #000; }
+    .header { padding: 50px 20px 10px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); z-index: 10; }
+    .back-btn { color: #007aff; cursor: pointer; font-size: 16px; margin-bottom: 10px; display: block; }
+    h1 { margin: 0; font-size: 32px; letter-spacing: -1px; }
+
+    .featured-hero { margin: 20px; height: 180px; background: linear-gradient(45deg, #007aff, #5856d6); border-radius: 20px; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; color: white; box-shadow: 0 10px 20px rgba(0,122,255,0.3); }
+    
+    .app-row { display: flex; align-items: center; padding: 15px 20px; border-bottom: 1px solid #f0f0f0; transition: background 0.2s; }
+    .app-row:active { background: #f9f9f9; }
+    .app-img { width: 60px; height: 60px; border-radius: 14px; margin-right: 15px; display: flex; justify-content: center; align-items: center; font-size: 30px; background: #f2f2f7; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
     .app-info { flex-grow: 1; }
-    .app-title { font-size: 18px; font-weight: bold; }
-    .app-desc { font-size: 12px; color: #888; }
-    .get-btn { background: #f2f2f7; color: #007aff; font-weight: bold; padding: 8px 20px; border-radius: 20px; cursor: pointer; border: none; font-size: 14px;}
-    .get-btn.owned { background: transparent; color: #ccc; }
+    .app-name { font-weight: 600; font-size: 17px; }
+    .app-cat { font-size: 13px; color: #8e8e93; margin-top: 2px; }
+
+    .get-btn { background: #f1f2f6; color: #007aff; border: none; padding: 6px 20px; border-radius: 20px; font-weight: bold; font-size: 14px; transition: all 0.2s; position: relative; overflow: hidden; }
+    .get-btn.installing { background: #34c759; color: white; width: 80px; }
   </style>
 </head>
 <body>
   <div class="header">
-    <div class="back-btn" onclick="window.parent.closeApp()">◀ Home</div>
-    App Store
+    <span class="back-btn" onclick="window.parent.closeApp()">◀ Back</span>
+    <h1>Apps</h1>
   </div>
 
-  <div class="store-list">
-    <div class="app-card">
-      <div class="app-icon" style="background: #ff0000; color: white;">🎬</div>
-      <div class="app-info"><div class="app-title">VideoTube</div><div class="app-desc">Watch mini movies!</div></div>
-      <button class="get-btn" id="btn-videotube" onclick="install('videotube')">GET</button>
-    </div>
-
-    <div class="app-card">
-      <div class="app-icon" style="background: #ffcc00;">🎨</div>
-      <div class="app-info"><div class="app-title">Paint Studio</div><div class="app-desc">Draw and color.</div></div>
-      <button class="get-btn" id="btn-paint" onclick="install('paint')">GET</button>
-    </div>
-
-    <div class="app-card">
-      <div class="app-icon" style="background: #34c759; color: white;">🐍</div>
-      <div class="app-info"><div class="app-title">Snake Classic</div><div class="app-desc">The retro phone game.</div></div>
-      <button class="get-btn" id="btn-snake" onclick="install('snake')">GET</button>
-    </div>
-
-    <div class="app-card">
-      <div class="app-icon" style="background: #fff; border: 1px solid #ccc;">🎹</div>
-      <div class="app-info"><div class="app-title">Mini Piano</div><div class="app-desc">Make some music!</div></div>
-      <button class="get-btn" id="btn-piano" onclick="install('piano')">GET</button>
-    </div>
+  <div class="featured-hero">
+    <div style="font-size: 12px; font-weight: bold; opacity: 0.8; text-transform: uppercase;">New Game</div>
+    <div style="font-size: 24px; font-weight: bold;">Snake Pro Max</div>
   </div>
+
+  <div id="store-list">
+    </div>
 
   <script>
-    const apps = ['videotube', 'paint', 'snake', 'piano'];
-    apps.forEach(app => {
-      if(localStorage.getItem('own_' + app) === 'true') {
-        const btn = document.getElementById('btn-' + app);
-        btn.innerText = 'OPEN'; btn.classList.add('owned');
-      }
-    });
+    const apps = [
+      { id: 'app-paint', name: 'Paint', cat: 'Creativity', icon: '🎨' },
+      { id: 'app-snake', name: 'Snake', cat: 'Games', icon: '🐍' },
+      { id: 'app-piano', name: 'Piano', cat: 'Music', icon: '🎹' },
+      { id: 'app-videotube', name: 'VideoTube', cat: 'Entertainment', icon: '🎬' }
+    ];
 
-    function install(app) {
-      const btn = document.getElementById('btn-' + app);
-      if(btn.innerText === 'OPEN') return; 
-      
-      btn.innerText = 'WAIT...';
-      setTimeout(() => {
-        localStorage.setItem('own_' + app, 'true');
-        btn.innerText = 'OPEN'; btn.classList.add('owned');
-        if(window.parent.installApp) {
-          window.parent.installApp('app-' + app);
-          alert(app.toUpperCase() + " installed to your Home Screen!");
-        }
-      }, 1500);
+    function renderApps() {
+      const list = document.getElementById('store-list');
+      list.innerHTML = apps.map(app => `
+        <div class="app-row">
+          <div class="app-img">${app.icon}</div>
+          <div class="app-info">
+            <div class="app-name">${app.name}</div>
+            <div class="app-cat">${app.cat}</div>
+          </div>
+          <button class="get-btn" id="btn-${app.id}" onclick="buy('${app.id}')">GET</button>
+        </div>
+      `).join('');
     }
+
+    function buy(id) {
+      const btn = document.getElementById('btn-' + id);
+      if (btn.innerText === "OPEN") { window.parent.openApp(id.split('-')[1]+'.html'); return; }
+      
+      btn.innerText = "•••";
+      btn.classList.add('installing');
+      
+      setTimeout(() => {
+        btn.innerText = "OPEN";
+        btn.classList.remove('installing');
+        localStorage.setItem('own_' + id.split('-')[1], 'true');
+        window.parent.installApp(id);
+      }, 2000);
+    }
+    renderApps();
   </script>
 </body>
 </html>
