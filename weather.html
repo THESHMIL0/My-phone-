@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather</title>
+  <style>
+    body { margin: 0; font-family: -apple-system, sans-serif; height: 100vh; background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%); color: white; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+    .header { width: 100%; padding: 50px 15px 10px; display: flex; align-items: center; position: relative; }
+    .back-btn { position: absolute; left: 15px; color: white; font-weight: bold; cursor: pointer; }
+    
+    .city { font-size: 32px; font-weight: 300; margin-top: 30px; }
+    .temp { font-size: 90px; font-weight: 200; margin-top: -10px; }
+    .desc { font-size: 20px; text-transform: capitalize; }
+    
+    /* Animated Sun/Cloud */
+    .icon-container { font-size: 120px; margin: 20px 0; position: relative; animation: float 3s ease-in-out infinite; text-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+    .forecast { margin-top: auto; margin-bottom: 50px; width: 80%; background: rgba(255,255,255,0.2); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px); }
+    .day { display: flex; justify-content: space-between; font-size: 18px; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
+    .day:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+  </style>
+</head>
+<body>
+  <div class="header"><div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div></div>
+  
+  <div class="city">New York</div>
+  <div class="icon-container">⛅</div>
+  <div class="temp">72°</div>
+  <div class="desc">Partly Cloudy</div>
+
+  <div class="forecast">
+    <div class="day"><span>Tomorrow</span> <span>☀️ 75°</span></div>
+    <div class="day"><span>Friday</span> <span>🌧️ 68°</span></div>
+    <div class="day"><span>Saturday</span> <span>⛅ 71°</span></div>
+  </div>
+</body>
+</html>
