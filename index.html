@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/GitHub_Invertocat_Logo.svg/512px-GitHub_Invertocat_Logo.svg.png">
+  
   <title>My Phone OS</title>
   <style>
     body { margin: 0; padding: 0; overflow: hidden; background-color: #000; font-family: -apple-system, sans-serif; }
@@ -21,7 +26,6 @@
 
     #home-screen { display: none; width: 100vw; height: 100vh; background: linear-gradient(to bottom right, #ff7e5f, #feb47b); position: relative; }
     
-    /* --- NEW: DYNAMIC ISLAND (Smart Notch) --- */
     .notch { 
       width: 150px; height: 30px; background: #000; border-radius: 0 0 15px 15px; 
       position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 101; cursor: pointer;
@@ -39,7 +43,6 @@
     .app-icon { width: 60px; height: 60px; background: rgba(255, 255, 255, 0.95); border-radius: 18px; display: flex; justify-content: center; align-items: center; font-size: 32px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); pointer-events: none; }
     .app-name { color: white; font-size: 12px; margin-top: 5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.6); pointer-events: none;}
 
-    /* Hidden Apps (For the App Store) */
     .hidden-app { display: none !important; }
 
     #app-window { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 95; transform: translateY(100%); opacity: 0; pointer-events: none; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s; }
@@ -81,7 +84,6 @@
       <div class="app-container" onclick="openApp('camera.html')"><div class="app-icon">📸</div><div class="app-name">Camera</div></div>
       <div class="app-container" onclick="openApp('settings.html')"><div class="app-icon">⚙️</div><div class="app-name">Settings</div></div>
       <div class="app-container" onclick="openApp('clock.html')"><div class="app-icon" style="background: #000; color: #ff9f0a;">⏱️</div><div class="app-name">Clock</div></div>
-      
       <div class="app-container" onclick="openApp('appstore.html')"><div class="app-icon" style="background: #007aff; color: white;">🛒</div><div class="app-name">App Store</div></div>
       
       <div class="app-container hidden-app" id="app-assistant" onclick="openApp('assistant.html')"><div class="app-icon" style="background: linear-gradient(to right, #ff00cc, #333399); color: white;">🎙️</div><div class="app-name">Assistant</div></div>
@@ -95,15 +97,19 @@
   </div>
 
   <script>
-    // --- LOAD SAVED MEMORY ---
+    // --- PWA SERVICE WORKER REGISTRATION ---
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('Service Worker Registered!'))
+        .catch(err => console.log('Service Worker Error: ', err));
+    }
+
     const savedWallpaper = localStorage.getItem('phoneWallpaper');
     if (savedWallpaper) { document.getElementById('home-screen').style.background = savedWallpaper; document.getElementById('lock-screen').style.background = savedWallpaper; }
 
-    // Check App Store Purchases!
     if (localStorage.getItem('own_assistant') === 'true') document.getElementById('app-assistant').classList.remove('hidden-app');
     if (localStorage.getItem('own_paint') === 'true') document.getElementById('app-paint').classList.remove('hidden-app');
 
-    // --- DYNAMIC ISLAND LOGIC ---
     function updateNotch(text, isActive) {
       const island = document.getElementById('dynamic-island');
       const notchText = document.getElementById('notch-text');
@@ -116,7 +122,6 @@
       }
     }
 
-    // --- BOOT & CLOCK ---
     function powerOn() {
       let elem = document.documentElement;
       if (elem.requestFullscreen) elem.requestFullscreen();
@@ -126,6 +131,7 @@
         document.getElementById('lock-screen').style.display = 'flex'; 
       }, 500);
     }
+    
     function updateClock() {
       const now = new Date();
       let hours = now.getHours(), minutes = now.getMinutes();
@@ -135,7 +141,6 @@
     }
     updateClock(); setInterval(updateClock, 1000);
 
-    // --- LOCK SCREEN ---
     var CORRECT_PASSCODE = localStorage.getItem('phonePasscode') || "1234";
     let enteredPasscode = "";
     function pressLockKey(num) {
@@ -160,7 +165,6 @@
       }
     }
 
-    // --- APP OPENING ---
     function openApp(appUrl) {
       document.getElementById('app-frame').src = appUrl;
       document.getElementById('app-window').classList.add('open');
@@ -172,7 +176,6 @@
       document.getElementById('status-bar').style.color = 'white'; 
     }
 
-    // Called by the App Store to unhide apps instantly!
     function installApp(appId) {
       document.getElementById(appId).classList.remove('hidden-app');
     }
