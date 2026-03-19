@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Piano</title>
+  <style>
+    body { margin: 0; background: #e5e5ea; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden;}
+    .header { width: 100%; padding: 50px 15px 15px; box-sizing: border-box; background: white; border-bottom: 1px solid #ccc; font-weight: bold; font-size: 20px; text-align: center; position: relative;}
+    .back-btn { position: absolute; left: 15px; color: #007aff; cursor: pointer; font-size: 16px; font-weight: normal;}
+    
+    .piano-container { display: flex; flex-grow: 1; padding: 20px; justify-content: center; align-items: center; position: relative; }
+    
+    /* The white keys */
+    .key-white { width: 50px; height: 300px; background: white; border: 1px solid #ccc; border-radius: 0 0 5px 5px; box-shadow: 0 4px 5px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 20px; font-weight: bold; user-select: none; transition: background 0.1s; z-index: 1;}
+    .key-white:active { background: #f0f0f0; height: 295px; }
+
+    /* The black keys */
+    .key-black { width: 35px; height: 180px; background: #111; border-radius: 0 0 5px 5px; box-shadow: 0 4px 5px rgba(0,0,0,0.5); cursor: pointer; z-index: 2; margin-left: -17.5px; margin-right: -17.5px; user-select: none; transition: background 0.1s;}
+    .key-black:active { background: #333; height: 175px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
+    Mini Piano 🎹
+  </div>
+
+  <div class="piano-container">
+    <div class="key-white" onmousedown="playNote(261.63)">C</div>
+    <div class="key-black" onmousedown="playNote(277.18)"></div>
+    <div class="key-white" onmousedown="playNote(293.66)">D</div>
+    <div class="key-black" onmousedown="playNote(311.13)"></div>
+    <div class="key-white" onmousedown="playNote(329.63)">E</div>
+    <div class="key-white" onmousedown="playNote(349.23)">F</div>
+    <div class="key-black" onmousedown="playNote(369.99)"></div>
+    <div class="key-white" onmousedown="playNote(392.00)">G</div>
+    <div class="key-black" onmousedown="playNote(415.30)"></div>
+    <div class="key-white" onmousedown="playNote(440.00)">A</div>
+    <div class="key-black" onmousedown="playNote(466.16)"></div>
+    <div class="key-white" onmousedown="playNote(493.88)">B</div>
+  </div>
+
+  <script>
+    // Browser Audio Setup
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function playNote(frequency) {
+      if (!audioCtx) audioCtx = new AudioContext(); // Initialize on first tap
+
+      // Create a sound wave generator
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      // Set the type of sound and the musical note frequency
+      oscillator.type = 'sine'; // 'sine', 'square', 'sawtooth', 'triangle'
+      oscillator.frequency.value = frequency;
+
+      // Start the sound
+      oscillator.start();
+
+      // Make it fade out nicely (like a real piano)
+      gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 1);
+      
+      // Stop the oscillator after 1 second
+      oscillator.stop(audioCtx.currentTime + 1);
+    }
+  </script>
+</body>
+</html>
