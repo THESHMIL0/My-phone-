@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Match</title>
+  <style>
+    body { margin: 0; background: #2c3e50; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh; color: white;}
+    .header { width: 100%; padding: 45px 15px 10px; display: flex; justify-content: space-between; box-sizing: border-box; font-weight: bold;}
+    .btn { color: #ecf0f1; cursor: pointer; }
+    
+    .grid { display: grid; grid-template-columns: repeat(4, 75px); gap: 10px; margin-top: 40px; perspective: 1000px;}
+    .card { width: 75px; height: 75px; background: #34495e; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 35px; cursor: pointer; transition: transform 0.4s; transform-style: preserve-3d; }
+    .card.flipped { transform: rotateY(180deg); background: #ecf0f1; }
+    .card .icon { transform: rotateY(180deg); display: none; }
+    .card.flipped .icon { display: block; }
+  </style>
+</head>
+<body>
+  <div class="header"><span class="btn" onclick="window.parent.closeApp()">◀ Quit</span><span class="btn" onclick="init()">Restart</span></div>
+  <h2 id="status">Matches: 0 / 8</h2>
+  
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const emojis = ['🍎','🍎','🐶','🐶','🚀','🚀','⚽','⚽','💎','💎','🎸','🎸','🍕','🍕','⚡','⚡'];
+    let grid = document.getElementById('grid'), status = document.getElementById('status');
+    let cards = [], flipped = [], matches = 0;
+
+    function init() {
+      grid.innerHTML = ''; flipped = []; matches = 0; status.innerText = "Matches: 0 / 8";
+      // Shuffle array
+      cards = emojis.sort(() => 0.5 - Math.random());
+      
+      cards.forEach((emoji, i) => {
+        let c = document.createElement('div'); c.className = 'card';
+        c.innerHTML = `<span class="icon">${emoji}</span>`;
+        c.onclick = () => flip(c, emoji);
+        grid.appendChild(c);
+      });
+    }
+
+    function flip(card, emoji) {
+      if(flipped.length < 2 && !card.classList.contains('flipped')) {
+        card.classList.add('flipped');
+        flipped.push({card, emoji});
+        
+        if(flipped.length === 2) {
+          setTimeout(checkMatch, 800);
+        }
+      }
+    }
+
+    function checkMatch() {
+      if(flipped[0].emoji === flipped[1].emoji) {
+        matches++; status.innerText = `Matches: ${matches} / 8`;
+        if(matches === 8) setTimeout(() => alert("You Won! 🎉"), 300);
+      } else {
+        flipped[0].card.classList.remove('flipped');
+        flipped[1].card.classList.remove('flipped');
+      }
+      flipped = [];
+    }
+    
+    init();
+  </script>
+</body>
+</html>
