@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Breakout</title>
+  <style>
+    body { margin:0; background:#111; overflow:hidden; touch-action:none; color:white; font-family:-apple-system, sans-serif;}
+    .header { padding:45px 15px 10px; display:flex; justify-content:space-between; position:absolute; width:100%; box-sizing:border-box; z-index:10; font-size: 18px;}
+    .btn { color:#0a84ff; font-weight:bold; cursor:pointer;}
+    canvas { display:block; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="btn" onclick="window.parent.closeApp()">◀ Quit</span>
+    <span id="score" style="font-weight:bold;">Score: 0</span>
+  </div>
+  
+  <canvas id="game"></canvas>
+  
+  <script>
+    const cvs = document.getElementById('game'), ctx = cvs.getContext('2d'), scoreEl = document.getElementById('score');
+    cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+    
+    let score = 0, playing = true;
+    let paddle = { x: cvs.width/2 - 40, y: cvs.height - 60, w: 80, h: 12 };
+    let ball = { x: cvs.width/2, y: cvs.height - 80, r: 8, dx: 5, dy: -5 };
+    
+    // Generate Bricks
+    let bricks = [], rows = 6, cols = Math.floor(cvs.width / 60);
+    let padding = (cvs.width - (cols * 50)) / (cols + 1); // Center the grid
+    
+    for(let i=0; i<cols; i++) { 
+      bricks[i] = []; 
+      for(let j=0; j<rows; j++) {
+        bricks[i][j] = { x: i * (50 + padding) + padding, y: j * 25 + 120, status: 1 }; 
+      } 
+    }
+    
+    // Touch Controls
+    cvs.addEventListener('touchmove', e => { paddle.x = e.touches[0].clientX - paddle.w/2; });
+    
+    function draw() {
+      if(!playing) return;
+      ctx.clearRect(0,0,cvs.width,cvs.height);
+      
+      // Draw Paddle & Ball
+      ctx.fillStyle = '#0a84ff'; ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
+      ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.closePath();
+      
+      // Draw Bricks & Handle Collisions
+      ctx.fillStyle = '#ff3b30';
+      let bricksLeft = false;
+      
+      for(let i=0; i<cols; i++) {
+        for(let j=0; j<rows; j++) {
+          let b = bricks[i][j];
+          if(b.status) {
+            bricksLeft = true;
+            ctx.fillRect(b.x, b.y, 50, 18);
+            // Did the ball hit this brick?
+            if(ball.x > b.x && ball.x < b.x + 50 && ball.y > b.y && ball.y < b.y + 18) {
+              ball.dy = -ball.dy; b.status = 0; score += 10; scoreEl.innerText = "Score: " + score;
+            }
+          }
+        }
+      }
+      
+      if(!bricksLeft) { alert("You Win!"); playing = false; return; }
+      
+      // Ball Physics & Walls
+      ball.x += ball.dx; ball.y += ball.dy;
+      if(ball.x + ball.dx > cvs.width - ball.r || ball.x + ball.dx < ball.r) ball.dx = -ball.dx;
+      if(ball.y + ball.dy < ball.r) ball.dy = -ball.dy;
+      else if(ball.y + ball.dy > cvs.height - ball.r) {
+        // Paddle Bounce
+        if(ball.x > paddle.x - 5 && ball.x < paddle.x + paddle.w + 5) ball.dy = -ball.dy;
+        else { alert("Game Over! Score: " + score); document.location.reload(); return; }
+      }
+      
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
+</body>
+</html>
