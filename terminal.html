@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal</title>
+  <style>
+    body { margin: 0; background: #000; color: #0f0; font-family: monospace; font-size: 15px; height: 100vh; display: flex; flex-direction: column; }
+    .header { padding: 45px 15px 10px; display: flex; justify-content: space-between; background: #111; border-bottom: 1px solid #333; color: white; }
+    .btn { color: #ff3b30; cursor: pointer; font-weight: bold; }
+    
+    #console { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; }
+    .line { margin-bottom: 5px; word-wrap: break-word; }
+    .input-line { display: flex; }
+    .prompt { margin-right: 8px; }
+    input { background: transparent; border: none; color: #0f0; font-family: monospace; font-size: 15px; flex-grow: 1; outline: none; }
+  </style>
+</head>
+<body onclick="document.getElementById('cmd').focus()">
+  <div class="header"><span class="btn" onclick="window.parent.closeApp()">◀ Exit</span><span>Terminal_v1.0</span><span style="width:40px;"></span></div>
+  
+  <div id="console">
+    <div class="line">Welcome to WebOS Terminal. Type 'help' for commands.</div>
+  </div>
+  <div class="input-line" style="padding: 0 15px 15px;">
+    <span class="prompt">root@os:~#</span>
+    <input type="text" id="cmd" autocomplete="off" onkeypress="runCmd(event)">
+  </div>
+
+  <script>
+    const cons = document.getElementById('console');
+    const inp = document.getElementById('cmd');
+
+    function print(text, color = "#0f0") {
+      cons.innerHTML += `<div class="line" style="color:${color}">${text}</div>`;
+      cons.scrollTop = cons.scrollHeight;
+    }
+
+    function runCmd(e) {
+      if(e.key === 'Enter') {
+        let val = inp.value.trim();
+        print("root@os:~# " + val, "#fff");
+        inp.value = '';
+        
+        let args = val.split(' ');
+        let cmd = args[0].toLowerCase();
+
+        if(cmd === 'help') print("Commands: help, clear, date, echo [text], wipe_data");
+        else if(cmd === 'clear') cons.innerHTML = '';
+        else if(cmd === 'date') print(new Date().toString());
+        else if(cmd === 'echo') print(args.slice(1).join(' '));
+        else if(cmd === 'wipe_data') print("ACCESS DENIED: Root privileges required.", "#ff3b30");
+        else if(cmd !== '') print(`bash: ${cmd}: command not found`, "#ff3b30");
+      }
+    }
+  </script>
+</body>
+</html>
