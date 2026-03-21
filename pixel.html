@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixel Art</title>
+  <style>
+    body { margin: 0; background: #e5e5ea; font-family: -apple-system, sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh; }
+    .header { width: 100%; padding: 45px 15px 10px; display: flex; justify-content: space-between; box-sizing: border-box; background: white; font-weight: bold; border-bottom: 1px solid #ccc;}
+    .btn { color: #af52de; cursor: pointer; }
+    
+    .grid { display: grid; grid-template-columns: repeat(16, 20px); grid-template-rows: repeat(16, 20px); gap: 1px; background: #ccc; border: 2px solid #333; margin-top: 30px; touch-action: none; }
+    .cell { background: white; width: 20px; height: 20px; cursor: pointer; }
+    
+    .palette { display: flex; gap: 10px; margin-top: 30px; background: white; padding: 15px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+    .color-swatch { width: 35px; height: 35px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: 0.2s; }
+    .color-swatch.active { border-color: #000; transform: scale(1.1); }
+  </style>
+</head>
+<body>
+  <div class="header"><span class="btn" onclick="window.parent.closeApp()">◀ Home</span><span>Pixel Art</span><span class="btn" onclick="clearGrid()">Clear</span></div>
+  
+  <div class="grid" id="grid"></div>
+  
+  <div class="palette">
+    <div class="color-swatch active" style="background: #000" onclick="setColor(this, '#000')"></div>
+    <div class="color-swatch" style="background: #ff3b30" onclick="setColor(this, '#ff3b30')"></div>
+    <div class="color-swatch" style="background: #34c759" onclick="setColor(this, '#34c759')"></div>
+    <div class="color-swatch" style="background: #007aff" onclick="setColor(this, '#007aff')"></div>
+    <div class="color-swatch" style="background: #ffcc00" onclick="setColor(this, '#ffcc00')"></div>
+    <div class="color-swatch" style="background: #fff; border: 1px solid #ccc;" onclick="setColor(this, '#fff')"></div>
+  </div>
+
+  <script>
+    const grid = document.getElementById('grid');
+    let currentColor = '#000';
+    let isDrawing = false;
+
+    // Create 16x16 Grid
+    for(let i = 0; i < 256; i++) {
+      let cell = document.createElement('div');
+      cell.className = 'cell';
+      // Desktop mouse events
+      cell.addEventListener('mousedown', () => { isDrawing = true; cell.style.background = currentColor; });
+      cell.addEventListener('mouseenter', () => { if(isDrawing) cell.style.background = currentColor; });
+      cell.addEventListener('mouseup', () => isDrawing = false);
+      
+      // Mobile touch events
+      cell.addEventListener('touchstart', (e) => { e.preventDefault(); isDrawing = true; cell.style.background = currentColor; });
+      cell.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        let touch = e.touches[0];
+        let target = document.elementFromPoint(touch.clientX, touch.clientY);
+        if(target && target.classList.contains('cell')) { target.style.background = currentColor; }
+      });
+      cell.addEventListener('touchend', () => isDrawing = false);
+      grid.appendChild(cell);
+    }
+    
+    document.body.addEventListener('mouseup', () => isDrawing = false);
+
+    function setColor(el, color) {
+      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      currentColor = color;
+    }
+
+    function clearGrid() { document.querySelectorAll('.cell').forEach(c => c.style.background = 'white'); }
+  </script>
+</body>
+</html>
