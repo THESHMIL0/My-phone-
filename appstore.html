@@ -34,11 +34,12 @@
     <div style="font-size: 24px; font-weight: bold;">Voice Memos Pro</div>
   </div>
 
-  <div id="store-list">
-    </div>
+  <div id="store-list"></div>
 
   <script>
     const apps = [
+      { id: 'app-tictactoe', name: 'Tic-Tac-Toe', cat: 'Games', icon: '❌' },
+      { id: 'app-2048', name: '2048 Puzzle', cat: 'Games', icon: '🔢' },
       { id: 'app-recorder', name: 'Voice Memos', cat: 'Utilities', icon: '🎙️' },
       { id: 'app-flappy', name: 'Flappy Clone', cat: 'Games', icon: '🐦' },
       { id: 'app-paint', name: 'Paint', cat: 'Creativity', icon: '🎨' },
@@ -50,52 +51,33 @@
     function renderApps() {
       const list = document.getElementById('store-list');
       list.innerHTML = apps.map(app => {
-        // Check if the app is already installed
         let isOwned = localStorage.getItem('own_' + app.id.split('-')[1]) === 'true';
         let btnText = isOwned ? 'OPEN' : 'GET';
         
         return `
         <div class="app-row">
           <div class="app-img">${app.icon}</div>
-          <div class="app-info">
-            <div class="app-name">${app.name}</div>
-            <div class="app-cat">${app.cat}</div>
-          </div>
+          <div class="app-info"><div class="app-name">${app.name}</div><div class="app-cat">${app.cat}</div></div>
           <button class="get-btn" id="btn-${app.id}" onclick="buy('${app.id}')">${btnText}</button>
-        </div>
-      `}).join('');
+        </div>`
+      }).join('');
     }
 
     function buy(id) {
       const btn = document.getElementById('btn-' + id);
-      
-      // If we already own it, tell the main OS to open it
       if (btn.innerText === "OPEN") { 
         let appData = apps.find(a => a.id === id);
-        if (window.parent && window.parent.openApp) {
-           window.parent.openApp(id.split('-')[1] + '.html', appData.name, appData.icon);
-        }
+        if (window.parent && window.parent.openApp) window.parent.openApp(id.split('-')[1] + '.html', appData.name, appData.icon);
         return; 
       }
       
-      // Otherwise, run the fake install animation
-      btn.innerText = "•••";
-      btn.classList.add('installing');
-      
+      btn.innerText = "•••"; btn.classList.add('installing');
       setTimeout(() => {
-        btn.innerText = "OPEN";
-        btn.classList.remove('installing');
-        
-        // Save ownership to phone memory
+        btn.innerText = "OPEN"; btn.classList.remove('installing');
         localStorage.setItem('own_' + id.split('-')[1], 'true');
-        
-        // Tell the main OS to unhide the icon on the home screen
-        if (window.parent && window.parent.installApp) {
-           window.parent.installApp(id);
-        }
+        if (window.parent && window.parent.installApp) window.parent.installApp(id);
       }, 1500);
     }
-    
     renderApps();
   </script>
 </body>
