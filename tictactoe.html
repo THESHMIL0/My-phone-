@@ -5,186 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tic-Tac-Toe</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: white;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .header {
-      padding-top: 50px;
-      padding-bottom: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      background-color: #f9f9f9;
-      font-size: 20px;
-      font-weight: bold;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .back-btn {
-      position: absolute;
-      left: 15px;
-      color: #ff3b30; /* Red back button for gaming */
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    /* The Game Container */
-    .game-area {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding-bottom: 50px;
-    }
-
-    #turn-indicator {
-      font-size: 24px;
-      margin-bottom: 20px;
-      font-weight: bold;
-    }
-
-    /* The 3x3 Grid */
-    .board {
-      display: grid;
-      grid-template-columns: repeat(3, 100px);
-      grid-template-rows: repeat(3, 100px);
-      gap: 5px;
-      background-color: #333;
-      padding: 5px;
-      border-radius: 10px;
-    }
-
-    .cell {
-      background-color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 60px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .reset-btn {
-      margin-top: 30px;
-      padding: 12px 24px;
-      font-size: 16px;
-      background-color: #007aff;
-      color: white;
-      border: none;
-      border-radius: 20px;
-      cursor: pointer;
-    }
+    body { margin: 0; background: #111; color: #fff; font-family: -apple-system, sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh;}
+    .header { width: 100%; padding: 45px 15px 15px; box-sizing: border-box; display: flex; justify-content: space-between; font-weight: bold;}
+    .btn { color: #0a84ff; cursor: pointer; }
+    
+    h2 { margin-top: 40px; font-weight: 300; font-size: 30px; }
+    
+    .board { display: grid; grid-template-columns: repeat(3, 90px); gap: 8px; margin-top: 20px; }
+    .cell { width: 90px; height: 90px; background: #222; display: flex; justify-content: center; align-items: center; font-size: 60px; font-family: monospace; cursor: pointer; border-radius: 15px; transition: 0.2s;}
+    .cell:active { background: #333; transform: scale(0.95);}
   </style>
 </head>
 <body>
-
-  <div class="header">
-    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
-    <span>Tic-Tac-Toe ❌⭕</span>
-  </div>
-
-  <div class="game-area">
-    <div id="turn-indicator">Player X's Turn</div>
-    
-    <div class="board" id="board">
-      <div class="cell" onclick="makeMove(0)"></div>
-      <div class="cell" onclick="makeMove(1)"></div>
-      <div class="cell" onclick="makeMove(2)"></div>
-      <div class="cell" onclick="makeMove(3)"></div>
-      <div class="cell" onclick="makeMove(4)"></div>
-      <div class="cell" onclick="makeMove(5)"></div>
-      <div class="cell" onclick="makeMove(6)"></div>
-      <div class="cell" onclick="makeMove(7)"></div>
-      <div class="cell" onclick="makeMove(8)"></div>
-    </div>
-
-    <button class="reset-btn" onclick="resetGame()">Restart Game</button>
-  </div>
+  <div class="header"><span class="btn" onclick="window.parent.closeApp()">◀ Quit</span><span class="btn" onclick="reset()">Restart 🔄</span></div>
+  <h2 id="status">Player X's Turn</h2>
+  <div class="board" id="board"></div>
 
   <script>
-    // --- JAVASCRIPT: The Game Logic ---
+    const board = document.getElementById('board'), status = document.getElementById('status');
+    let cells = ["","","","","","","","",""], turn = "X", gameActive = true;
 
-    let currentPlayer = "X";
-    let gameActive = true;
-    
-    // This array tracks the 9 boxes on the board. Empty means no one played there yet.
-    let boardState = ["", "", "", "", "", "", "", "", ""]; 
+    function init() {
+      board.innerHTML = "";
+      cells.forEach((c, i) => {
+        let div = document.createElement('div'); div.className = "cell";
+        div.onclick = () => play(i, div);
+        board.appendChild(div);
+      });
+    }
 
-    // All the winning combinations (rows, columns, diagonals)
-    const winningConditions = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-      [0, 4, 8], [2, 4, 6]             // Diagonals
-    ];
-
-    function makeMove(cellIndex) {
-      // If the game is over or the cell is already taken, do nothing
-      if (!gameActive || boardState[cellIndex] !== "") return;
-
-      // 1. Update our memory array
-      boardState[cellIndex] = currentPlayer;
-      
-      // 2. Update the screen
-      const cells = document.getElementsByClassName("cell");
-      cells[cellIndex].innerText = currentPlayer;
-      cells[cellIndex].style.color = currentPlayer === "X" ? "#ff3b30" : "#007aff";
-
-      // 3. Check if someone won!
+    function play(i, div) {
+      if(!gameActive || cells[i] !== "") return;
+      cells[i] = turn; div.innerText = turn; 
+      div.style.color = turn === 'X' ? '#ff3b30' : '#34c759'; // Red X, Green O
       checkWin();
+      if(gameActive) { turn = turn === "X" ? "O" : "X"; status.innerText = "Player " + turn + "'s Turn"; }
     }
 
     function checkWin() {
-      let roundWon = false;
-
-      // Loop through all winning combinations to see if the current player has one
-      for (let i = 0; i < winningConditions.length; i++) {
-        const [a, b, c] = winningConditions[i];
-        if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
-          roundWon = true;
-          break;
+      const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      for(let w of wins) {
+        if(cells[w[0]] && cells[w[0]] === cells[w[1]] && cells[w[0]] === cells[w[2]]) {
+          status.innerText = cells[w[0]] + " Wins! 🎉"; gameActive = false; return;
         }
       }
-
-      if (roundWon) {
-        document.getElementById("turn-indicator").innerText = `Player ${currentPlayer} Wins! 🎉`;
-        gameActive = false;
-        return;
-      }
-
-      // Check for a tie (if there are no empty spots left)
-      if (!boardState.includes("")) {
-        document.getElementById("turn-indicator").innerText = "It's a Tie! 🤝";
-        gameActive = false;
-        return;
-      }
-
-      // If no one won and it's not a tie, switch turns!
-      currentPlayer = currentPlayer === "X" ? "O" : "X";
-      document.getElementById("turn-indicator").innerText = `Player ${currentPlayer}'s Turn`;
+      if(!cells.includes("")) { status.innerText = "It's a Draw! 🤝"; gameActive = false; }
     }
 
-    function resetGame() {
-      currentPlayer = "X";
-      gameActive = true;
-      boardState = ["", "", "", "", "", "", "", "", ""];
-      
-      document.getElementById("turn-indicator").innerText = "Player X's Turn";
-      
-      const cells = document.getElementsByClassName("cell");
-      for (let i = 0; i < cells.length; i++) {
-        cells[i].innerText = "";
-      }
-    }
+    function reset() { cells = ["","","","","","","","",""]; turn = "X"; gameActive = true; status.innerText = "Player X's Turn"; init(); }
+    init();
   </script>
-
 </body>
 </html>
