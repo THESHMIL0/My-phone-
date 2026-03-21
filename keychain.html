@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keychain</title>
+  <style>
+    body { margin: 0; font-family: -apple-system, sans-serif; background: #f2f2f7; color: black; display: flex; flex-direction: column; height: 100vh;}
+    .header { padding: 45px 15px 10px; display: flex; justify-content: space-between; background: #fff; border-bottom: 1px solid #ccc; font-weight: bold;}
+    .btn { color: #007aff; cursor: pointer; }
+    
+    /* Lock Screen Overlay */
+    #lock { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; }
+    #lock h2 { font-weight: 300; margin-bottom: 20px; }
+    #lock input { font-size: 24px; text-align: center; padding: 10px; width: 120px; border-radius: 10px; border: none; letter-spacing: 5px; outline: none; }
+    
+    /* Main UI */
+    .list { padding: 15px; flex-grow: 1; overflow-y: auto; }
+    .card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;}
+    .site { font-weight: bold; font-size: 16px; margin-bottom: 4px;}
+    .user { font-size: 13px; color: #888; }
+    .pass { font-family: monospace; background: #eee; padding: 4px 8px; border-radius: 6px; font-size: 14px; cursor: pointer;}
+  </style>
+</head>
+<body>
+  <div id="lock">
+    <h2>🔐 Keychain Locked</h2>
+    <input type="password" id="pin" placeholder="PIN" inputmode="numeric" oninput="checkPin()">
+    <div style="margin-top:20px; color:#888; font-size:12px;">Default PIN is 1234</div>
+  </div>
+
+  <div class="header">
+    <span class="btn" onclick="window.parent.closeApp()">◀ Exit</span>
+    <span>Passwords</span>
+    <span class="btn" onclick="addPass()">+ Add</span>
+  </div>
+  
+  <div class="list" id="list"></div>
+
+  <script>
+    // Master PIN logic
+    function checkPin() {
+      let pin = document.getElementById('pin').value;
+      if(pin === "1234") { document.getElementById('lock').style.display = 'none'; render(); }
+    }
+
+    let passwords = JSON.parse(localStorage.getItem('os_keychain')) || [
+      { site: "GitHub", user: "dev_master", pass: "ILoveCode99!" },
+      { site: "FakeBook", user: "test_user", pass: "password123" }
+    ];
+
+    function render() {
+      const l = document.getElementById('list'); l.innerHTML = '';
+      passwords.forEach(p => {
+        l.innerHTML += `
+        <div class="card">
+          <div><div class="site">${p.site}</div><div class="user">${p.user}</div></div>
+          <div class="pass" onclick="alert('Password:\\n${p.pass}')">••••••••</div>
+        </div>`;
+      });
+    }
+
+    function addPass() {
+      let site = prompt("Website/App Name:"); if(!site) return;
+      let user = prompt("Username:");
+      let pass = prompt("Password:"); if(!pass) return;
+      passwords.push({site, user, pass});
+      localStorage.setItem('os_keychain', JSON.stringify(passwords));
+      render();
+    }
+  </script>
+</body>
+</html>
