@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timer</title>
+  <style>
+    body { margin: 0; font-family: -apple-system, sans-serif; background: #000; color: white; display: flex; flex-direction: column; height: 100vh; align-items: center; }
+    .header { width: 100%; padding: 45px 15px 15px; display: flex; box-sizing: border-box; }
+    .btn { color: #ff9f0a; cursor: pointer; font-size: 16px; font-weight: 500;}
+    
+    .timer-circle { width: 250px; height: 250px; border-radius: 50%; border: 4px solid #333; display: flex; justify-content: center; align-items: center; margin: 40px 0; font-size: 60px; font-weight: 200; font-variant-numeric: tabular-nums; }
+    
+    .input-row { display: flex; gap: 10px; margin-bottom: 30px; }
+    input { width: 80px; padding: 10px; border-radius: 10px; border: none; background: #1c1c1e; color: white; font-size: 20px; text-align: center; outline: none; }
+    
+    .start-btn { width: 80px; height: 80px; border-radius: 50%; background: #1c3d1e; color: #34c759; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s;}
+    .start-btn:active { transform: scale(0.9); }
+    .stop-btn { background: #3d1c1c; color: #ff3b30; }
+  </style>
+</head>
+<body>
+  <div class="header"><span class="btn" onclick="window.parent.closeApp()">◀ Back</span></div>
+  
+  <div class="timer-circle" id="display">00:00</div>
+  
+  <div class="input-row">
+    <input type="number" id="mins" placeholder="Min" min="0">
+    <input type="number" id="secs" placeholder="Sec" min="0" max="59">
+  </div>
+  
+  <div class="start-btn" id="action-btn" onclick="toggle()">Start</div>
+
+  <script>
+    let timer, timeLeft = 0, isRunning = false;
+    const disp = document.getElementById('display'), btn = document.getElementById('action-btn');
+
+    function toggle() {
+      if(!isRunning) {
+        if(timeLeft === 0) {
+          let m = parseInt(document.getElementById('mins').value) || 0;
+          let s = parseInt(document.getElementById('secs').value) || 0;
+          timeLeft = (m * 60) + s;
+        }
+        if(timeLeft <= 0) return;
+        
+        btn.innerText = "Stop"; btn.className = "start-btn stop-btn";
+        isRunning = true;
+        timer = setInterval(() => {
+          timeLeft--;
+          let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+          disp.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+          if(timeLeft <= 0) {
+            clearInterval(timer); isRunning = false;
+            btn.innerText = "Start"; btn.className = "start-btn";
+            alert("⏰ TIME IS UP! ⏰");
+          }
+        }, 1000);
+      } else {
+        clearInterval(timer); isRunning = false;
+        btn.innerText = "Start"; btn.className = "start-btn";
+      }
+    }
+  </script>
+</body>
+</html>
