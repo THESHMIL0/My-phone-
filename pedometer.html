@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedometer</title>
+  <style>
+    body { margin:0; font-family:-apple-system, sans-serif; background:#000; color:white; display:flex; flex-direction:column; align-items:center; height:100vh;}
+    .header { width:100%; padding:45px 15px 15px; display:flex; box-sizing:border-box; }
+    .btn { color:#34c759; cursor:pointer; font-weight:bold; font-size: 18px;}
+    .circle { width:250px; height:250px; border-radius:50%; border:8px solid #34c759; display:flex; flex-direction:column; justify-content:center; align-items:center; margin-top:60px; box-shadow:0 0 40px rgba(52,199,89,0.3);}
+    .steps { font-size:70px; font-weight:bold; font-variant-numeric: tabular-nums;}
+    .label { font-size:20px; color:#888; margin-top:5px; text-transform:uppercase; letter-spacing:2px;}
+    .info { text-align:center; padding:40px 20px; color:#aaa; line-height:1.5; font-size: 15px;}
+  </style>
+</head>
+<body>
+  <div class="header"><span class="btn" onclick="window.parent.closeApp()">◀ Home</span></div>
+  
+  <div class="circle">
+    <div class="steps" id="step-count">0</div>
+    <div class="label">Steps</div>
+  </div>
+  
+  <div class="info">Put the phone in your pocket and start walking! Uses your device's built-in accelerometer.</div>
+  
+  <script>
+    let steps = parseInt(localStorage.getItem('os_steps')) || 0;
+    document.getElementById('step-count').innerText = steps;
+    
+    let stepCooldown = false;
+
+    if (window.DeviceMotionEvent) {
+      window.addEventListener('devicemotion', e => {
+        let acc = e.accelerationIncludingGravity;
+        if(!acc) return;
+        
+        // Calculate the total force of the movement using physics (3D vectors)
+        let force = Math.sqrt(acc.x*acc.x + acc.y*acc.y + acc.z*acc.z);
+        
+        // Earth's gravity is ~9.8. If the force spikes over 13, it's a footstep!
+        if (force > 13 && !stepCooldown) {
+          steps++;
+          document.getElementById('step-count').innerText = steps;
+          localStorage.setItem('os_steps', steps);
+          
+          // Wait 400ms before allowing the next step (prevents double-counting)
+          stepCooldown = true;
+          setTimeout(() => stepCooldown = false, 400); 
+        }
+      });
+    } else {
+      alert("Motion sensors not available on this browser.");
+    }
+  </script>
+</body>
+</html>
