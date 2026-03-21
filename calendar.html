@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar</title>
+  <style>
+    body { margin: 0; font-family: -apple-system, sans-serif; background: #fff; }
+    .header { padding: 45px 15px 15px; display: flex; justify-content: space-between; background: #f2f2f7; font-weight: bold; font-size: 18px; border-bottom: 1px solid #e5e5ea; position: sticky; top: 0;}
+    .back { color: #ff3b30; cursor: pointer; font-weight: normal; }
+    .month-title { text-align: center; padding: 20px; font-size: 28px; font-weight: bold; color: #ff3b30; }
+    .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; padding: 10px; text-align: center; }
+    .day-label { font-size: 12px; color: #8e8e93; font-weight: bold; margin-bottom: 10px; text-transform: uppercase;}
+    .day { padding: 15px 0; background: #f9f9f9; border-radius: 8px; cursor: pointer; font-size: 18px; transition: 0.1s;}
+    .day:active { background: #e5e5ea; transform: scale(0.9); }
+    .today { background: #ff3b30; color: #fff; font-weight: bold; }
+    .has-event { border-bottom: 4px solid #ff3b30; }
+  </style>
+</head>
+<body>
+  <div class="header"><span class="back" onclick="window.parent.closeApp()">◀ Home</span><span>Calendar</span><span style="width:50px"></span></div>
+  <div class="month-title" id="month-name"></div>
+  
+  <div class="grid">
+    <div class="day-label">S</div><div class="day-label">M</div><div class="day-label">T</div><div class="day-label">W</div><div class="day-label">T</div><div class="day-label">F</div><div class="day-label">S</div>
+  </div>
+  <div class="grid" id="days"></div>
+
+  <script>
+    const daysDiv = document.getElementById('days'), monthName = document.getElementById('month-name');
+    const date = new Date();
+    const events = JSON.parse(localStorage.getItem('os_events')) || {};
+
+    monthName.innerText = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+    const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    const today = date.getDate();
+
+    for(let i=1; i<=daysInMonth; i++) {
+      let d = document.createElement('div');
+      d.className = 'day' + (i === today ? ' today' : '') + (events[i] ? ' has-event' : '');
+      d.innerText = i;
+      d.onclick = () => {
+        let ev = prompt("Add event for the " + i + ":\n(Leave blank to delete)", events[i] || "");
+        if(ev !== null) {
+          if(ev) events[i] = ev; else delete events[i];
+          localStorage.setItem('os_events', JSON.stringify(events));
+          location.reload(); // Refresh to show the red underline!
+        }
+      };
+      daysDiv.appendChild(d);
+    }
+  </script>
+</body>
+</html>
