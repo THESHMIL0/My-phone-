@@ -1,45 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>App Store</title>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>App Store</title>
   <style>
     body { margin: 0; font-family: -apple-system, sans-serif; background: #fff; color: #000; padding-bottom: 40px; }
     .header { padding: 45px 20px 10px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); z-index: 10; }
     .back-btn { color: #007aff; cursor: pointer; font-size: 16px; margin-bottom: 10px; display: block; font-weight: 500; }
     h1 { margin: 0; font-size: 32px; letter-spacing: -1px; font-weight: bold; }
-
-    .featured-hero { margin: 20px; height: 180px; background: linear-gradient(45deg, #ff2a5f, #ff7e5f); border-radius: 20px; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; color: white; box-shadow: 0 10px 20px rgba(255,42,95,0.3); }
-    
-    .app-row { display: flex; align-items: center; padding: 15px 20px; border-bottom: 1px solid #f0f0f0; transition: background 0.2s; }
+    .featured-hero { margin: 20px; height: 180px; background: linear-gradient(45deg, #af52de, #5856d6); border-radius: 20px; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; color: white; box-shadow: 0 10px 20px rgba(175,82,222,0.3); }
+    .app-row { display: flex; align-items: center; padding: 15px 20px; border-bottom: 1px solid #f0f0f0; transition: 0.2s; }
     .app-row:active { background: #f9f9f9; }
     .app-img { width: 60px; height: 60px; border-radius: 14px; margin-right: 15px; display: flex; justify-content: center; align-items: center; font-size: 30px; background: #f2f2f7; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
     .app-info { flex-grow: 1; }
     .app-name { font-weight: 600; font-size: 17px; }
     .app-cat { font-size: 13px; color: #8e8e93; margin-top: 2px; }
-
-    .get-btn { background: #f1f2f6; color: #007aff; border: none; padding: 6px 20px; border-radius: 20px; font-weight: bold; font-size: 14px; transition: all 0.2s; position: relative; overflow: hidden; cursor: pointer; }
+    .get-btn { background: #f1f2f6; color: #007aff; border: none; padding: 6px 20px; border-radius: 20px; font-weight: bold; font-size: 14px; transition: 0.2s; cursor: pointer; }
     .get-btn.installing { background: #34c759; color: white; width: 80px; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <span class="back-btn" onclick="window.parent.closeApp()">◀ Home</span>
-    <h1>App Store</h1>
-  </div>
-
+  <div class="header"><span class="back-btn" onclick="window.parent.closeApp()">◀ Home</span><h1>App Store</h1></div>
   <div class="featured-hero">
-    <div style="font-size: 12px; font-weight: bold; opacity: 0.8; text-transform: uppercase;">App of the Day</div>
-    <div style="font-size: 24px; font-weight: bold;">Voice Memos Pro</div>
+    <div style="font-size: 12px; font-weight: bold; opacity: 0.8; text-transform: uppercase;">New Release</div>
+    <div style="font-size: 24px; font-weight: bold;">Space Shooter Pro</div>
   </div>
-
   <div id="store-list"></div>
-
   <script>
     const apps = [
+      { id: 'app-space', name: 'Space Shooter', cat: 'Games', icon: '🚀' },
+      { id: 'app-breakout', name: 'Brick Breaker', cat: 'Games', icon: '🧱' },
+      { id: 'app-pixel', name: 'Pixel Studio', cat: 'Creativity', icon: '👾' },
       { id: 'app-tictactoe', name: 'Tic-Tac-Toe', cat: 'Games', icon: '❌' },
       { id: 'app-2048', name: '2048 Puzzle', cat: 'Games', icon: '🔢' },
+      { id: 'app-memory', name: 'Memory Match', cat: 'Games', icon: '🃏' },
+      { id: 'app-typing', name: 'Typing Test', cat: 'Games', icon: '⌨️' },
       { id: 'app-recorder', name: 'Voice Memos', cat: 'Utilities', icon: '🎙️' },
       { id: 'app-flappy', name: 'Flappy Clone', cat: 'Games', icon: '🐦' },
       { id: 'app-paint', name: 'Paint', cat: 'Creativity', icon: '🎨' },
@@ -53,7 +47,6 @@
       list.innerHTML = apps.map(app => {
         let isOwned = localStorage.getItem('own_' + app.id.split('-')[1]) === 'true';
         let btnText = isOwned ? 'OPEN' : 'GET';
-        
         return `
         <div class="app-row">
           <div class="app-img">${app.icon}</div>
@@ -70,7 +63,6 @@
         if (window.parent && window.parent.openApp) window.parent.openApp(id.split('-')[1] + '.html', appData.name, appData.icon);
         return; 
       }
-      
       btn.innerText = "•••"; btn.classList.add('installing');
       setTimeout(() => {
         btn.innerText = "OPEN"; btn.classList.remove('installing');
