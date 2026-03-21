@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Settings</title>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Settings</title>
   <style>
     :root { --bg: #f2f2f7; --card: #fff; --text: #000; --accent: #007aff; --border: #e5e5ea; }
     body.dark { --bg: #000; --card: #1c1c1e; --text: #fff; --border: #38383a; }
@@ -15,74 +13,68 @@
     .row { display: flex; align-items: center; padding: 14px 15px; border-bottom: 1px solid var(--border); cursor: pointer; }
     .row:last-child { border-bottom: none; }
     .label { flex-grow: 1; font-size: 17px; }
-    .val { color: #8e8e93; margin-right: 10px; font-size: 16px;}
     .switch { width: 50px; height: 30px; background: #e5e5ea; border-radius: 15px; position: relative; transition: 0.3s; }
     .switch.on { background: #34c759; }
-    .dot { width: 26px; height: 26px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .dot { width: 26px; height: 26px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     .switch.on .dot { transform: translateX(20px); }
-    
     .section-title { margin-left: 20px; font-size: 13px; color: #8e8e93; text-transform: uppercase; margin-bottom: 5px;}
     .wall-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; }
-    .wall { height: 60px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); }
+    .wall { height: 60px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); background-size: cover; background-position: center;}
+    input[type="file"] { display: none; }
   </style>
 </head>
 <body>
   <div class="nav"><span class="back" onclick="window.parent.closeApp()">◀ Home</span></div>
   <h1>Settings</h1>
 
-  <div class="group">
-    <div class="row" onclick="window.parent.triggerInstall()">
-      <div class="label" style="color: var(--accent); font-weight: bold;">⬇️ Install OS to Home Screen</div>
-    </div>
-  </div>
+  <div class="group"><div class="row" onclick="window.parent.triggerInstall()"><div class="label" style="color: var(--accent); font-weight: bold;">⬇️ Install OS to Home Screen</div></div></div>
+  <div class="group"><div class="row" onclick="toggle('dark')"><div class="label">Dark Mode</div><div id="dark-sw" class="switch"><div class="dot"></div></div></div></div>
 
-  <div class="group">
-    <div class="row" onclick="toggle('dark')"><div class="label">Dark Mode</div><div id="dark-sw" class="switch"><div class="dot"></div></div></div>
-  </div>
-
-  <div class="section-title">Home Screen Wallpaper</div>
+  <div class="section-title">Wallpapers</div>
   <div class="group wall-grid">
-    <div class="wall" style="background: linear-gradient(to bottom right, #ff7e5f, #feb47b);" onclick="setWall('home', 0)"></div>
-    <div class="wall" style="background: linear-gradient(to bottom right, #2193b0, #6dd5ed);" onclick="setWall('home', 1)"></div>
-    <div class="wall" style="background: linear-gradient(to bottom right, #000, #434343);" onclick="setWall('home', 2)"></div>
-    <div class="wall" style="background: linear-gradient(to bottom right, #833ab4, #fd1d1d);" onclick="setWall('home', 3)"></div>
+    <div class="wall" style="background: linear-gradient(to bottom right, #ff7e5f, #feb47b);" onclick="setWall(0)"></div>
+    <div class="wall" style="background: linear-gradient(to bottom right, #2193b0, #6dd5ed);" onclick="setWall(1)"></div>
+    <div class="wall" style="background: linear-gradient(to bottom right, #000, #434343);" onclick="setWall(2)"></div>
+    <div class="wall" style="background: linear-gradient(to bottom right, #833ab4, #fd1d1d);" onclick="setWall(3)"></div>
   </div>
+  
+  <label class="group" style="display: block;">
+    <div class="row"><div class="label" style="color: #af52de; font-weight: bold;">📸 Upload Custom Photo Wallpaper</div></div>
+    <input type="file" accept="image/*" id="custom-wall" onchange="uploadWall(event)">
+  </label>
 
-  <div class="section-title">Lock Screen Wallpaper</div>
-  <div class="group wall-grid">
-    <div class="wall" style="background: linear-gradient(to bottom right, #ff7e5f, #feb47b);" onclick="setWall('lock', 0)"></div>
-    <div class="wall" style="background: linear-gradient(to bottom right, #2193b0, #6dd5ed);" onclick="setWall('lock', 1)"></div>
-    <div class="wall" style="background: linear-gradient(to bottom right, #000, #434343);" onclick="setWall('lock', 2)"></div>
-    <div class="wall" style="background: linear-gradient(to bottom right, #833ab4, #fd1d1d);" onclick="setWall('lock', 3)"></div>
-  </div>
-
-  <div class="group">
-    <div class="row" onclick="reset()"><div class="label" style="color:#ff3b30; text-align: center; font-weight: bold; width: 100%;">Erase All Data</div></div>
-  </div>
+  <div class="group"><div class="row" onclick="reset()"><div class="label" style="color:#ff3b30; text-align: center; font-weight: bold; width: 100%;">Erase All Data</div></div></div>
 
   <script>
     const walls = ["linear-gradient(to bottom right, #ff7e5f, #feb47b)","linear-gradient(to bottom right, #2193b0, #6dd5ed)","linear-gradient(to bottom right, #000, #434343)","linear-gradient(to bottom right, #833ab4, #fd1d1d)"];
     
-    function toggle(t) {
-      let k = 'phoneDarkMode';
-      localStorage.setItem(k, localStorage.getItem(k) !== 'true');
-      updateUI();
-    }
-    
+    function toggle(t) { localStorage.setItem('phoneDarkMode', localStorage.getItem('phoneDarkMode') !== 'true'); updateUI(); }
     function updateUI() {
       const d = localStorage.getItem('phoneDarkMode') === 'true';
-      document.body.classList.toggle('dark', d);
-      document.getElementById('dark-sw').classList.toggle('on', d);
+      document.body.classList.toggle('dark', d); document.getElementById('dark-sw').classList.toggle('on', d);
     }
     
-    function setWall(type, i) {
+    function setWall(i) {
       const bg = walls[i];
-      if (type === 'home') {
-        window.parent.document.getElementById('home-screen').style.background = bg;
-        localStorage.setItem('homeWallpaper', bg);
-      } else {
-        window.parent.document.getElementById('lock-screen').style.background = bg;
-        localStorage.setItem('lockWallpaper', bg);
+      window.parent.document.getElementById('home-screen').style.background = bg;
+      window.parent.document.getElementById('lock-screen').style.background = bg;
+      localStorage.setItem('homeWallpaper', bg);
+    }
+
+    // Convert uploaded image to Base64 and save as wallpaper!
+    function uploadWall(e) {
+      const file = e.target.files[0];
+      if(file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imgData = `url(${event.target.result})`;
+          window.parent.document.getElementById('home-screen').style.backgroundImage = imgData;
+          window.parent.document.getElementById('home-screen').style.backgroundSize = "cover";
+          window.parent.document.getElementById('lock-screen').style.backgroundImage = imgData;
+          window.parent.document.getElementById('lock-screen').style.backgroundSize = "cover";
+          localStorage.setItem('homeWallpaper', imgData);
+        };
+        reader.readAsDataURL(file);
       }
     }
     
