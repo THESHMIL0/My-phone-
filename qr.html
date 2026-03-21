@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Scanner</title>
+  <style>
+    body { margin: 0; background: #000; color: white; font-family: -apple-system, sans-serif; display: flex; flex-direction: column; height: 100vh;}
+    .header { padding: 45px 15px 15px; display: flex; justify-content: space-between; font-weight: bold; background: #111; border-bottom: 1px solid #333;}
+    .btn { color: #0a84ff; cursor: pointer; font-weight: 500;}
+    #reader { width: 100%; flex-grow: 1; background: #222; display: flex; align-items: center; justify-content: center; overflow: hidden; border: none;}
+    #result { padding: 25px 20px; text-align: center; font-size: 16px; word-break: break-all; min-height: 80px; background: #111;}
+  </style>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+  <div class="header"><span class="btn" onclick="window.parent.closeApp()">◀ Home</span><span>QR Scanner</span><span style="width:50px"></span></div>
+  
+  <div id="reader"></div>
+  <div id="result">Point your camera at a QR Code...</div>
+
+  <script>
+    function onScanSuccess(decodedText, decodedResult) {
+      document.getElementById('result').innerHTML = `Found:<br><br><a href="${decodedText}" target="_blank" style="color:#0a84ff; text-decoration: none; font-weight: bold;">${decodedText}</a>`;
+    }
+    function onScanFailure(error) { /* Ignoring background errors */ }
+    
+    // Initialize the scanner
+    let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+  </script>
+</body>
+</html>
