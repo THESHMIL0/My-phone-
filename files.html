@@ -10,7 +10,7 @@
     .back { color: #007aff; cursor: pointer; font-size: 17px; font-weight: 500;}
     h1 { margin: 15px 20px 20px; font-size: 34px; letter-spacing: -1px; }
     
-    .section { margin-left: 20px; font-size: 13px; color: #8e8e93; text-transform: uppercase; margin-bottom: 8px;}
+    .section { margin-left: 20px; font-size: 13px; color: #8e8e93; text-transform: uppercase; margin-bottom: 8px; margin-top: 20px;}
     .group { background: #fff; margin: 0 15px 25px; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);}
     .row { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #e5e5ea; cursor: pointer;}
     .row:active { background: #f9f9f9; }
@@ -20,7 +20,8 @@
     .info { flex-grow: 1; }
     .name { font-size: 17px; }
     .count { font-size: 14px; color: #8e8e93; margin-top: 2px; }
-    .chevron { color: #c7c7cc; font-weight: bold; }
+    
+    #vault-files { display: none; background: #111; color: #0f0; margin: 0 15px 25px; border-radius: 12px; padding: 15px; font-family: monospace;}
   </style>
 </head>
 <body>
@@ -30,29 +31,42 @@
   <div class="section">Locations</div>
   <div class="group">
     <div class="row" onclick="window.parent.openApp('gallery.html')">
-      <div class="icon">📸</div>
-      <div class="info"><div class="name">Camera Roll</div><div class="count" id="photo-count">0 items</div></div>
-      <div class="chevron">></div>
+      <div class="icon">📸</div><div class="info"><div class="name">Camera Roll</div><div class="count" id="photo-count">0 items</div></div>
     </div>
     <div class="row" onclick="window.parent.openApp('notes.html')">
-      <div class="icon">📝</div>
-      <div class="info"><div class="name">Notes Documents</div><div class="count" id="note-count">0 items</div></div>
-      <div class="chevron">></div>
-    </div>
-    <div class="row">
-      <div class="icon">⚙️</div>
-      <div class="info"><div class="name">System Data</div><div class="count">Encrypted</div></div>
-      <div class="chevron">></div>
+      <div class="icon">📝</div><div class="info"><div class="name">Notes</div><div class="count" id="note-count">0 items</div></div>
     </div>
   </div>
 
+  <div class="section">Secure</div>
+  <div class="group">
+    <div class="row" onclick="openVault()">
+      <div class="icon">🔒</div><div class="info"><div class="name">Secure Vault</div><div class="count">Requires PIN</div></div>
+    </div>
+  </div>
+  
+  <div id="vault-files">
+    <div>> ENCRYPTED VAULT UNLOCKED</div>
+    <div>> user_passwords.txt</div>
+    <div>> secret_source_code.js</div>
+    <div>> top_secret_project.pdf</div>
+    <div style="color: #ff3b30; margin-top: 10px; cursor: pointer;" onclick="document.getElementById('vault-files').style.display='none'">[LOCK VAULT]</div>
+  </div>
+
   <script>
-    // Read the OS memory to count your files!
     const photos = JSON.parse(localStorage.getItem('os_photos')) || [];
     const notes = JSON.parse(localStorage.getItem('os_notes')) || [];
-    
     document.getElementById('photo-count').innerText = photos.length + " items";
     document.getElementById('note-count').innerText = notes.length + " items";
+
+    function openVault() {
+      let pin = prompt("Enter 4-Digit Vault PIN:");
+      if(pin === "0000") { // You can change this PIN to anything!
+        document.getElementById('vault-files').style.display = 'block';
+      } else if (pin) {
+        alert("ACCESS DENIED.");
+      }
+    }
   </script>
 </body>
 </html>
