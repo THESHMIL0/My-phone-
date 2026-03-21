@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#000000"><title>My Phone OS</title>
+  <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#000000"><title>WebOS Pro</title>
   <style>
     body { margin: 0; padding: 0; overflow: hidden; background-color: #000; font-family: -apple-system, sans-serif; }
     #boot-screen, #loading-screen { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background: #000; color: white; z-index: 100; flex-direction: column; cursor: pointer; }
@@ -15,11 +15,10 @@
 
     #brightness-overlay { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: black; opacity: 0; z-index: 9999; pointer-events: none; transition: opacity 0.5s; }
 
-    #lock-screen { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(to bottom right, #ff7e5f, #feb47b); z-index: 80; flex-direction: column; align-items: center; color: white; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+    #lock-screen { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background-size: cover; background-position: center; z-index: 80; flex-direction: column; align-items: center; color: white; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
     .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); z-index: -1; backdrop-filter: blur(2px);}
     .lock-time { font-size: 75px; font-weight: 200; margin-top: 80px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);}
     
-    /* NEW: Lock Screen Notifications */
     .ls-notifs { position: absolute; top: 180px; width: 90%; max-width: 350px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 85; }
     .ls-notif-card { background: rgba(255,255,255,0.2); backdrop-filter: blur(15px); padding: 15px; border-radius: 15px; color: white; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     .ls-notif-header { font-size: 12px; opacity: 0.8; margin-bottom: 5px; text-transform: uppercase; font-weight: bold;}
@@ -34,7 +33,7 @@
     .ls-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; }
     #flashlight-overlay { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 999; }
 
-    #home-screen { display: none; width: 100vw; height: 100vh; background: linear-gradient(to bottom right, #ff7e5f, #feb47b); position: relative; filter: blur(20px); transform: scale(1.1); transition: 0.7s; overflow-y: auto; padding-bottom: 30px;}
+    #home-screen { display: none; width: 100vw; height: 100vh; background-size: cover; background-position: center; position: relative; filter: blur(20px); transform: scale(1.1); transition: 0.7s; overflow-y: auto; padding-bottom: 30px;}
     #home-screen.unlocked { filter: blur(0); transform: scale(1); }
     
     .notch { width: 140px; height: 32px; background: #000; border-radius: 0 0 16px 16px; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 101; display: flex; justify-content: center; align-items: center; color: #ff9f0a; font-weight: bold; font-family: monospace; font-size: 14px; transition: 0.4s;}
@@ -83,7 +82,7 @@
   
   <div id="notification-center">
     <div style="font-size: 28px; font-weight: bold; margin-bottom: 25px;">Notifications</div>
-    <div class="notif-card"><div class="ls-notif-header">💬 System Message</div><div><strong>AI Bot:</strong> You successfully built all 19 features. You are a Web OS Master! 🎉</div></div>
+    <div class="notif-card" onclick="playSound('notif')"><div class="ls-notif-header">💬 System Message</div><div><strong>AI Bot:</strong> Your Ultra OS is complete! The audio engine is live. 🎉</div></div>
     <div class="home-bar" style="background: white; bottom: 20px;" onclick="toggleNotifications()"></div>
   </div>
 
@@ -92,13 +91,8 @@
       <div class="cc-box active" onclick="this.classList.toggle('active')">📶<div style="font-size:12px; margin-top:5px;">Wi-Fi</div></div>
       <div class="cc-box" onclick="this.classList.toggle('active')">ᛒ<div style="font-size:12px; margin-top:5px;">Bluetooth</div></div>
     </div>
-    <div class="cc-slider">
-      <div>☀️ Brightness</div>
-      <input type="range" min="0" max="80" value="80" oninput="changeBrightness(this.value)">
-    </div>
-    <div class="cc-slider" style="text-align: center; cursor: pointer; background: #34c759;" onclick="chargeBattery()">
-      ⚡ Plug In Charger
-    </div>
+    <div class="cc-slider"><div>☀️ Brightness</div><input type="range" min="0" max="80" value="80" oninput="changeBrightness(this.value)"></div>
+    <div class="cc-slider" style="text-align: center; cursor: pointer; background: #34c759;" onclick="chargeBattery()">⚡ Plug In Charger</div>
     <div class="home-bar" style="background: white; bottom: 20px;" onclick="toggleControlCenter()"></div>
   </div>
 
@@ -106,14 +100,9 @@
 
   <div id="lock-screen">
     <div class="lock-overlay"></div><div class="lock-time" id="big-clock">12:00</div>
-    
     <div class="ls-notifs">
-      <div class="ls-notif-card">
-        <div class="ls-notif-header">System Update</div>
-        <div>New QR Scanner installed to Home Screen!</div>
-      </div>
+      <div class="ls-notif-card"><div class="ls-notif-header">Welcome to WebOS Pro</div><div>Swipe up to unlock your device!</div></div>
     </div>
-
     <div class="passcode-dots" id="dots-container"><div class="dot" id="dot-1"></div><div class="dot" id="dot-2"></div><div class="dot" id="dot-3"></div><div class="dot" id="dot-4"></div></div>
     <div class="lock-keypad">
       <div class="lock-btn" onclick="pressLockKey('1')">1</div><div class="lock-btn" onclick="pressLockKey('2')">2</div><div class="lock-btn" onclick="pressLockKey('3')">3</div>
@@ -121,9 +110,7 @@
       <div class="lock-btn" onclick="pressLockKey('7')">7</div><div class="lock-btn" onclick="pressLockKey('8')">8</div><div class="lock-btn" onclick="pressLockKey('9')">9</div>
       <div></div><div class="lock-btn" onclick="pressLockKey('0')">0</div><div></div>
     </div>
-    <div class="ls-actions">
-      <div class="ls-btn" onclick="toggleFlash()">🔦</div><div class="ls-btn" onclick="openApp('camera.html', 'Camera', '📸')">📷</div>
-    </div>
+    <div class="ls-actions"><div class="ls-btn" onclick="toggleFlash()">🔦</div><div class="ls-btn" onclick="openApp('camera.html', 'Camera', '📸')">📷</div></div>
   </div>
 
   <div id="home-screen">
@@ -143,9 +130,11 @@
       <div class="app-container" onclick="openApp('clock.html', 'Clock', '⏱️')"><div class="app-icon" style="background: #000; color: #ff9f0a;">⏱️</div><div class="app-name">Clock</div></div>
       
       <div class="app-container" onclick="openApp('qr.html', 'QR Scanner', '📷')"><div class="app-icon" style="background: #34c759; color: white;">📷</div><div class="app-name">Scanner</div></div>
+      <div class="app-container" onclick="openApp('compass.html', 'Compass', '🧭')"><div class="app-icon" style="background: #111; color: #ff3b30;">🧭</div><div class="app-name">Compass</div></div>
+      <div class="app-container" onclick="openApp('pedometer.html', 'Pedometer', '🚶')"><div class="app-icon" style="background: #34c759; color: white;">🚶</div><div class="app-name">Fitness</div></div>
+      <div class="app-container" onclick="openApp('keychain.html', 'Keychain', '🔐')"><div class="app-icon" style="background: #ffcc00; color: #111;">🔐</div><div class="app-name">Keychain</div></div>
       
       <div class="app-container" onclick="openApp('appstore.html', 'App Store', '🛒')"><div class="app-icon" style="background: #007aff; color: white;">🛒</div><div class="app-name">App Store</div></div>
-      
       <div class="app-container" onclick="openApp('files.html', 'Files', '📁')"><div class="app-icon" style="background: #007aff; color: white;">📁</div><div class="app-name">Files</div></div>
       <div class="app-container" onclick="openApp('calendar.html', 'Calendar', '📅')"><div class="app-icon" style="color: red;">📅</div><div class="app-name">Calendar</div></div>
       <div class="app-container" onclick="openApp('contacts.html', 'Contacts', '📇')"><div class="app-icon" style="background: #e5e5ea;">📇</div><div class="app-name">Contacts</div></div>
@@ -154,6 +143,9 @@
       <div class="app-container" onclick="openApp('terminal.html', 'Terminal', '💻')"><div class="app-icon" style="background:#111; color:#0f0;">💻</div><div class="app-name">Terminal</div></div>
       <div class="app-container" onclick="openApp('settings.html', 'Settings', '⚙️')"><div class="app-icon" style="background: #8e8e93; color: white;">⚙️</div><div class="app-name">Settings</div></div>
 
+      <div class="app-container hidden-app" id="app-space" onclick="openApp('space.html', 'Space Shooter', '🚀')"><div class="app-icon" style="background: #000; color: white;">🚀</div><div class="app-name">Space</div></div>
+      <div class="app-container hidden-app" id="app-breakout" onclick="openApp('breakout.html', 'Breakout', '🧱')"><div class="app-icon" style="background: #0a84ff; color: white;">🧱</div><div class="app-name">Breakout</div></div>
+      <div class="app-container hidden-app" id="app-pixel" onclick="openApp('pixel.html', 'Pixel Studio', '👾')"><div class="app-icon" style="background: #af52de; color: white;">👾</div><div class="app-name">Pixel Art</div></div>
       <div class="app-container hidden-app" id="app-typing" onclick="openApp('typing.html', 'Typing', '⌨️')"><div class="app-icon" style="background: #2c3e50; color: white;">⌨️</div><div class="app-name">Typing</div></div>
       <div class="app-container hidden-app" id="app-memory" onclick="openApp('memory.html', 'Memory', '🃏')"><div class="app-icon" style="background:#2c3e50; color:white;">🃏</div><div class="app-name">Memory</div></div>
       <div class="app-container hidden-app" id="app-paint" onclick="openApp('paint.html', 'Paint', '🎨')"><div class="app-icon" style="background: #ffcc00;">🎨</div><div class="app-name">Paint</div></div>
@@ -162,7 +154,7 @@
       <div class="app-container hidden-app" id="app-videotube" onclick="openApp('videotube.html', 'VideoTube', '🎬')"><div class="app-icon" style="background: #ff0000; color: white;">🎬</div><div class="app-name">VideoTube</div></div>
       <div class="app-container hidden-app" id="app-recorder" onclick="openApp('recorder.html', 'Voice Memos', '🎙️')"><div class="app-icon" style="background: #ff3b30; color: white;">🎙️</div><div class="app-name">Memos</div></div>
       <div class="app-container hidden-app" id="app-flappy" onclick="openApp('flappy.html', 'Flappy', '🐦')"><div class="app-icon" style="background: #70c5ce; color: white;">🐦</div><div class="app-name">Flappy</div></div>
-      <div class="app-container hidden-app" id="app-tictactoe" onclick="openApp('tictactoe.html', 'Tic-Tac-Toe', '❌')"><div class="app-icon" style="background: #111; color: white;">❌</div><div class="app-name">TicTacToe</div></div>
+      <div class="app-container hidden-app" id="app-tictactoe" onclick="openApp('tictactoe.html', 'TicTacToe', '❌')"><div class="app-icon" style="background: #111; color: white;">❌</div><div class="app-name">TicTacToe</div></div>
       <div class="app-container hidden-app" id="app-2048" onclick="openApp('2048.html', '2048', '🔢')"><div class="app-icon" style="background: #edc22e; color: white;">🔢</div><div class="app-name">2048</div></div>
     </div>
   </div>
@@ -174,22 +166,45 @@
   <script>
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
     
-    // Load Dual Wallpapers & Apps
+    // Web Audio API: System Sound Effects
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+    function playSound(type) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      if (type === 'tick') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+      } else if (type === 'lock') {
+        osc.type = 'triangle'; osc.frequency.setValueAtTime(300, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+      } else if (type === 'notif') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime); osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+      }
+    }
+
+    // Load Wallpapers (Handles Custom Photos!)
     const homeW = localStorage.getItem('homeWallpaper') || "linear-gradient(to bottom right, #ff7e5f, #feb47b)";
     const lockW = localStorage.getItem('lockWallpaper') || "linear-gradient(to bottom right, #ff7e5f, #feb47b)";
-    document.getElementById('home-screen').style.background = homeW;
-    document.getElementById('lock-screen').style.background = lockW;
+    document.getElementById('home-screen').style.backgroundImage = homeW.includes('url') ? homeW : 'none';
+    document.getElementById('home-screen').style.background = homeW.includes('url') ? homeW : homeW;
+    document.getElementById('lock-screen').style.backgroundImage = lockW.includes('url') ? lockW : 'none';
+    document.getElementById('lock-screen').style.background = lockW.includes('url') ? lockW : lockW;
 
-    ['paint','snake','piano','videotube','recorder','flappy','tictactoe','2048','memory','typing'].forEach(a => { 
+    // Unhide Store Apps
+    ['paint','snake','piano','videotube','recorder','flappy','tictactoe','2048','memory','typing','space','breakout','pixel'].forEach(a => { 
       if(localStorage.getItem('own_'+a) === 'true') { let el = document.getElementById('app-'+a); if(el) el.classList.remove('hidden-app'); } 
     });
 
-    // Control Center & Brightness
     function toggleNotifications() { document.getElementById('notification-center').classList.toggle('open'); }
     function toggleControlCenter() { document.getElementById('control-center').classList.toggle('open'); }
     function changeBrightness(val) { document.getElementById('brightness-overlay').style.opacity = (80 - val) / 100; }
 
-    // NEW: Battery Drain Simulation
     let battery = 100;
     setInterval(() => {
       if(battery > 1) battery--;
@@ -197,10 +212,9 @@
         el.innerText = `🔋 ${battery}%`;
         if(battery <= 20) el.classList.add('battery-low'); else el.classList.remove('battery-low');
       });
-    }, 15000); // Drains 1% every 15 seconds so you can see it working!
+    }, 15000); 
     function chargeBattery() { battery = 100; alert("Charging... Battery at 100%!"); }
 
-    // App Switcher
     let recentApps = [];
     function openAppSwitcher() {
       if(!recentApps.length) return;
@@ -215,32 +229,34 @@
     function closeFromSwitcher(i, e) { e.stopPropagation(); recentApps.splice(i, 1); openAppSwitcher(); if(!recentApps.length) document.getElementById('app-switcher').style.display='none'; }
 
     function powerOn() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      playSound('lock');
       try { let elem = document.documentElement; if(elem.requestFullscreen) elem.requestFullscreen(); else if(elem.webkitRequestFullscreen) elem.webkitRequestFullscreen(); } catch (err) {}
       document.getElementById('boot-screen').style.display = 'none'; document.getElementById('loading-screen').style.display = 'flex';
       setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; document.getElementById('lock-screen').style.display = 'flex'; }, 2600);
     }
     
-    // Auto-Dark Mode inside updateClock
     function updateClock() {
       const d = new Date(); let h = d.getHours(), m = d.getMinutes(); 
       let mStr = m<10?'0'+m:m; let timeStr = h+':'+mStr;
-      
       document.getElementById('small-clock').textContent = timeStr; document.getElementById('big-clock').textContent = timeStr;
       if(document.getElementById('widget-time')) document.getElementById('widget-time').textContent = timeStr;
-      
       const days = ["SUN","MON","TUE","WED","THU","FRI","SAT"], months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
       if(document.getElementById('widget-date')) document.getElementById('widget-date').textContent = `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}`;
-
-      // NEW: Auto-Dark Mode (Dims screen if after 6 PM or before 6 AM)
-      if (h >= 18 || h < 6) { changeBrightness(30); }
+      if (h >= 18 || h < 6) changeBrightness(30);
     }
     updateClock(); setInterval(updateClock, 1000);
 
     var PASS = localStorage.getItem('phonePasscode') || "1234"; let entered = "";
-    function pressLockKey(n) { if (entered.length < 4) { entered += n; updateDots(); } if (entered.length === 4) setTimeout(checkPass, 200); }
+    function pressLockKey(n) { 
+      playSound('tick');
+      if (entered.length < 4) { entered += n; updateDots(); } 
+      if (entered.length === 4) setTimeout(checkPass, 200); 
+    }
     function updateDots() { for (let i=1; i<=4; i++) document.getElementById('dot-'+i).classList.toggle('filled', i <= entered.length); }
     function checkPass() {
       if (entered === PASS) {
+        playSound('lock');
         document.getElementById('lock-screen').style.transform = 'translateY(-100%)';
         setTimeout(() => document.getElementById('home-screen').classList.add('unlocked'), 100);
         setTimeout(() => { document.getElementById('lock-screen').style.display = 'none'; document.getElementById('home-screen').style.display = 'block'; }, 600);
@@ -272,6 +288,7 @@
     function installApp(id) { document.getElementById(id).classList.remove('hidden-app'); }
 
     function toggleFlash() {
+      playSound('tick');
       let overlay = document.getElementById('flashlight-overlay');
       if (!overlay) { overlay = document.createElement('div'); overlay.id = 'flashlight-overlay'; overlay.onclick = () => overlay.style.display = 'none'; document.body.appendChild(overlay); }
       overlay.style.display = 'block';
