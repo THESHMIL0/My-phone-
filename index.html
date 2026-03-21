@@ -15,63 +15,78 @@
 
     #brightness-overlay { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: black; opacity: 0; z-index: 9999; pointer-events: none; transition: opacity 0.5s; }
 
-    #lock-screen { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background-size: cover; background-position: center; z-index: 80; flex-direction: column; align-items: center; color: white; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
-    .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); z-index: -1; backdrop-filter: blur(2px);}
-    .lock-time { font-size: 75px; font-weight: 200; margin-top: 80px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);}
+    /* UPGRADED LOCK SCREEN ANIMATION */
+    #lock-screen { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background-size: cover; background-position: center; z-index: 80; flex-direction: column; align-items: center; color: white; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease; transform-origin: center; }
+    .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); z-index: -1; backdrop-filter: blur(5px);}
+    .lock-time { font-size: 75px; font-weight: 200; margin-top: 80px; text-shadow: 0 4px 15px rgba(0,0,0,0.3);}
     
     .ls-notifs { position: absolute; top: 180px; width: 90%; max-width: 350px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 85; }
-    .ls-notif-card { background: rgba(255,255,255,0.2); backdrop-filter: blur(15px); padding: 15px; border-radius: 15px; color: white; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    .ls-notif-header { font-size: 12px; opacity: 0.8; margin-bottom: 5px; text-transform: uppercase; font-weight: bold;}
+    .ls-notif-card { background: rgba(255,255,255,0.25); backdrop-filter: blur(20px); padding: 15px; border-radius: 18px; color: white; font-size: 14px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.2); transition: transform 0.2s; }
+    .ls-notif-card:active { transform: scale(0.95); }
+    .ls-notif-header { font-size: 12px; opacity: 0.9; margin-bottom: 5px; text-transform: uppercase; font-weight: bold;}
 
     .passcode-dots { display: flex; gap: 20px; margin-bottom: 30px; margin-top: auto;}
-    .dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid white; transition: 0.2s; }
-    .dot.filled { background: white; transform: scale(1.1);}
+    .dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid white; transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .dot.filled { background: white; transform: scale(1.3);}
     .lock-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px 30px; margin-bottom: 80px;}
-    .lock-btn { width: 70px; height: 70px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; justify-content: center; align-items: center; font-size: 32px; color: white; cursor: pointer; backdrop-filter: blur(10px);}
+    .lock-btn { width: 75px; height: 75px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; justify-content: center; align-items: center; font-size: 34px; color: white; cursor: pointer; backdrop-filter: blur(15px); transition: all 0.15s; border: 1px solid rgba(255,255,255,0.05); }
+    .lock-btn:active { background: rgba(255,255,255,0.4); transform: scale(0.85); }
     
     .ls-actions { position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: space-between; padding: 0 45px; box-sizing: border-box; }
-    .ls-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; }
+    .ls-btn { width: 55px; height: 55px; border-radius: 50%; background: rgba(0,0,0,0.4); backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,0.1); }
+    .ls-btn:active { transform: scale(0.75) }
     #flashlight-overlay { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 999; }
 
-    #home-screen { display: none; width: 100vw; height: 100vh; background-size: cover; background-position: center; position: relative; filter: blur(20px); transform: scale(1.1); transition: 0.7s; overflow-y: auto; padding-bottom: 30px;}
+    #home-screen { display: none; width: 100vw; height: 100vh; background-size: cover; background-position: center; position: relative; filter: blur(25px); transform: scale(1.15); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); overflow-y: auto; padding-bottom: 30px;}
     #home-screen.unlocked { filter: blur(0); transform: scale(1); }
     
-    .notch { width: 140px; height: 32px; background: #000; border-radius: 0 0 16px 16px; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 101; display: flex; justify-content: center; align-items: center; color: #ff9f0a; font-weight: bold; font-family: monospace; font-size: 14px; transition: 0.4s;}
+    .notch { width: 140px; height: 32px; background: #000; border-radius: 0 0 16px 16px; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 101; display: flex; justify-content: center; align-items: center; color: #ff9f0a; font-weight: bold; font-family: monospace; font-size: 14px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
     
-    .status-bar { display: flex; justify-content: space-between; padding: 12px 25px; color: white; font-size: 15px; font-weight: bold; position: sticky; top: 0; z-index: 90; text-shadow: 0 1px 3px rgba(0,0,0,0.4);}
+    .status-bar { display: flex; justify-content: space-between; padding: 12px 25px; color: white; font-size: 15px; font-weight: bold; position: sticky; top: 0; z-index: 90; text-shadow: 0 2px 4px rgba(0,0,0,0.6);}
     .status-left, .status-right { cursor: pointer; z-index: 95; }
     .battery-low { color: #ff3b30 !important; }
 
-    #control-center { position: absolute; top: 0; right: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); backdrop-filter: blur(25px); z-index: 98; transform: translateY(-100%); transition: 0.4s cubic-bezier(0.25, 1, 0.5, 1); padding: 60px 20px; box-sizing: border-box; }
-    #control-center.open { transform: translateY(0); }
-    .cc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-    .cc-box { background: rgba(255,255,255,0.2); border-radius: 20px; padding: 25px 0; color: white; display: flex; flex-direction: column; align-items: center; font-size: 28px; cursor: pointer; transition: 0.2s;}
-    .cc-box.active { background: #007aff; }
-    .cc-slider { background: rgba(255,255,255,0.2); border-radius: 20px; padding: 20px; color: white; font-weight: bold; margin-bottom: 15px;}
-    .cc-slider input { width: 100%; margin-top: 10px; }
+    /* ULTRA GLASSMORPHISM */
+    #control-center, #notification-center { position: absolute; top: 0; right: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); z-index: 98; transform: translateY(-100%); transition: 0.5s cubic-bezier(0.32, 1.15, 0.25, 1); padding: 60px 20px; box-sizing: border-box; border-bottom: 1px solid rgba(255,255,255,0.15); }
+    #control-center.open, #notification-center.open { transform: translateY(0); }
+    
+    .cc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+    .cc-box { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 30px 0; color: white; display: flex; flex-direction: column; align-items: center; font-size: 32px; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.1);}
+    .cc-box:active { transform: scale(0.9); }
+    .cc-box.active { background: #007aff; border-color: #5ac8fa; box-shadow: 0 10px 30px rgba(0,122,255,0.4); }
+    
+    .cc-slider { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 20px; color: white; font-weight: bold; margin-bottom: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.2s;}
+    .cc-slider:active { transform: scale(0.97); }
+    .cc-slider input { width: 100%; margin-top: 10px; accent-color: white;}
 
-    .app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 15px; padding: 30px 15px; }
+    .app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px 15px; padding: 35px 15px; }
     .app-container { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-    .widget-2x2 { grid-column: span 2; grid-row: span 2; background: rgba(0,0,0,0.3); backdrop-filter: blur(15px); border-radius: 28px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; color: white; border: 1px solid rgba(255,255,255,0.1); }
+    
+    .widget-2x2 { grid-column: span 2; grid-row: span 2; background: rgba(0,0,0,0.25); backdrop-filter: blur(20px); border-radius: 30px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; color: white; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .widget-2x2:active { transform: scale(0.92); }
     .widget-time { font-size: 48px; font-weight: 200; margin-top: -5px;}
-    .widget-date { font-size: 14px; color: rgba(255,255,255,0.8); font-weight: 600; text-transform: uppercase; }
+    .widget-date { font-size: 14px; color: rgba(255,255,255,0.9); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
 
-    .app-icon { width: 62px; height: 62px; background: rgba(255, 255, 255, 0.95); border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 34px; box-shadow: 0 6px 15px rgba(0,0,0,0.15); transition: 0.2s; position: relative; overflow: hidden; }
-    .app-name { color: white; font-size: 12px; margin-top: 6px; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.6); text-align: center;}
+    /* SQUISHY APP ICONS */
+    .app-icon { width: 64px; height: 64px; background: rgba(255, 255, 255, 0.95); border-radius: 22px; display: flex; justify-content: center; align-items: center; font-size: 36px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
+    .app-container:active .app-icon { transform: scale(0.75) translateY(5px); filter: brightness(0.7); box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+    .app-name { color: white; font-size: 12px; margin-top: 8px; font-weight: 600; text-shadow: 0 2px 5px rgba(0,0,0,0.8); text-align: center; transition: 0.2s;}
+    .app-container:active .app-name { opacity: 0.5; transform: translateY(5px); }
     .hidden-app { display: none !important; }
 
-    #notification-center { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(25px); z-index: 98; transform: translateY(-100%); transition: 0.4s; padding: 60px 20px 20px; box-sizing: border-box; color: white; }
-    #notification-center.open { transform: translateY(0); }
-    .notif-card { background: rgba(255,255,255,0.2); border-radius: 18px; padding: 18px; margin-bottom: 15px; }
+    #app-switcher { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(25px); z-index: 97; flex-direction: row; align-items: center; overflow-x: auto; padding: 30px; box-sizing: border-box; gap: 30px; }
+    .switcher-card { min-width: 240px; height: 480px; background: white; border-radius: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 60px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .switcher-card:active { transform: scale(0.9); }
+    .close-app-btn { position: absolute; top: -15px; right: -15px; background: #ff3b30; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; cursor: pointer; border: 3px solid white; box-shadow: 0 5px 15px rgba(255,59,48,0.4); transition: 0.2s;}
+    .close-app-btn:active { transform: scale(0.8); }
 
-    #app-switcher { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); z-index: 97; flex-direction: row; align-items: center; overflow-x: auto; padding: 30px; box-sizing: border-box; gap: 25px; }
-    .switcher-card { min-width: 220px; height: 450px; background: white; border-radius: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 60px; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
-    .close-app-btn { position: absolute; top: -15px; right: -15px; background: #ff3b30; color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: 2px solid white;}
-
-    #app-window { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 95; transform: translateY(100%); transition: 0.5s; border-radius: 40px; overflow: hidden; }
-    #app-window.open { transform: translateY(0); border-radius: 0;}
+    /* SPRING PHYSICS APP WINDOW */
+    #app-window { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 95; transform: scale(0.8) translateY(50px); opacity: 0; pointer-events: none; transition: all 0.5s cubic-bezier(0.32, 1.15, 0.25, 1); border-radius: 50px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.5);}
+    #app-window.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; border-radius: 0; }
     #app-frame { width: 100%; height: 100%; border: none; }
-    .home-bar { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); width: 140px; height: 6px; background: #111; border-radius: 10px; cursor: pointer; z-index: 100;}
+    
+    .home-bar { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); width: 140px; height: 5px; background: #111; border-radius: 10px; cursor: pointer; z-index: 100; transition: all 0.2s;}
+    .home-bar:active { transform: translateX(-50%) scale(1.2, 2); background: #555;}
   </style>
 </head>
 <body>
@@ -81,18 +96,21 @@
   <div class="notch" id="dynamic-island"><span class="notch-text" id="notch-text"></span></div>
   
   <div id="notification-center">
-    <div style="font-size: 28px; font-weight: bold; margin-bottom: 25px;">Notifications</div>
-    <div class="notif-card" onclick="playSound('notif')"><div class="ls-notif-header">💬 System Message</div><div><strong>AI Bot:</strong> Your Ultra OS is complete! The audio engine is live. 🎉</div></div>
+    <div style="font-size: 32px; font-weight: bold; margin-bottom: 30px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">Notifications</div>
+    <div class="notif-card" onclick="playSound('notif')">
+      <div class="ls-notif-header">✨ UI Upgrade Complete</div>
+      <div style="font-size: 15px;"><strong>AI Bot:</strong> Try opening an app. Look at that spring physics bounce! 😸</div>
+    </div>
     <div class="home-bar" style="background: white; bottom: 20px;" onclick="toggleNotifications()"></div>
   </div>
 
   <div id="control-center">
     <div class="cc-grid">
-      <div class="cc-box active" onclick="this.classList.toggle('active')">📶<div style="font-size:12px; margin-top:5px;">Wi-Fi</div></div>
-      <div class="cc-box" onclick="this.classList.toggle('active')">ᛒ<div style="font-size:12px; margin-top:5px;">Bluetooth</div></div>
+      <div class="cc-box active" onclick="this.classList.toggle('active')">📶<div style="font-size:14px; margin-top:8px; font-weight:600;">Wi-Fi</div></div>
+      <div class="cc-box" onclick="this.classList.toggle('active')">ᛒ<div style="font-size:14px; margin-top:8px; font-weight:600;">Bluetooth</div></div>
     </div>
     <div class="cc-slider"><div>☀️ Brightness</div><input type="range" min="0" max="80" value="80" oninput="changeBrightness(this.value)"></div>
-    <div class="cc-slider" style="text-align: center; cursor: pointer; background: #34c759;" onclick="chargeBattery()">⚡ Plug In Charger</div>
+    <div class="cc-slider" style="text-align: center; cursor: pointer; background: #34c759; border-color: #34c759;" onclick="chargeBattery()">⚡ Plug In Charger</div>
     <div class="home-bar" style="background: white; bottom: 20px;" onclick="toggleControlCenter()"></div>
   </div>
 
@@ -101,7 +119,7 @@
   <div id="lock-screen">
     <div class="lock-overlay"></div><div class="lock-time" id="big-clock">12:00</div>
     <div class="ls-notifs">
-      <div class="ls-notif-card"><div class="ls-notif-header">Welcome to WebOS Pro</div><div>Swipe up to unlock your device!</div></div>
+      <div class="ls-notif-card"><div class="ls-notif-header">WebOS v7.0</div><div>UI Animations upgraded. Device running smoothly.</div></div>
     </div>
     <div class="passcode-dots" id="dots-container"><div class="dot" id="dot-1"></div><div class="dot" id="dot-2"></div><div class="dot" id="dot-3"></div><div class="dot" id="dot-4"></div></div>
     <div class="lock-keypad">
@@ -129,9 +147,9 @@
       <div class="app-container" onclick="openApp('gallery.html', 'Gallery', '🖼️')"><div class="app-icon" style="background: linear-gradient(to bottom right, #ff0844, #ffb199); color: white;">🖼️</div><div class="app-name">Gallery</div></div>
       <div class="app-container" onclick="openApp('clock.html', 'Clock', '⏱️')"><div class="app-icon" style="background: #000; color: #ff9f0a;">⏱️</div><div class="app-name">Clock</div></div>
       
-      <div class="app-container" onclick="openApp('qr.html', 'QR Scanner', '📷')"><div class="app-icon" style="background: #34c759; color: white;">📷</div><div class="app-name">Scanner</div></div>
+      <div class="app-container" onclick="openApp('qr.html', 'Scanner', '📷')"><div class="app-icon" style="background: #34c759; color: white;">📷</div><div class="app-name">Scanner</div></div>
       <div class="app-container" onclick="openApp('compass.html', 'Compass', '🧭')"><div class="app-icon" style="background: #111; color: #ff3b30;">🧭</div><div class="app-name">Compass</div></div>
-      <div class="app-container" onclick="openApp('pedometer.html', 'Pedometer', '🚶')"><div class="app-icon" style="background: #34c759; color: white;">🚶</div><div class="app-name">Fitness</div></div>
+      <div class="app-container" onclick="openApp('pedometer.html', 'Fitness', '🚶')"><div class="app-icon" style="background: #34c759; color: white;">🚶</div><div class="app-name">Fitness</div></div>
       <div class="app-container" onclick="openApp('keychain.html', 'Keychain', '🔐')"><div class="app-icon" style="background: #ffcc00; color: #111;">🔐</div><div class="app-name">Keychain</div></div>
       
       <div class="app-container" onclick="openApp('appstore.html', 'App Store', '🛒')"><div class="app-icon" style="background: #007aff; color: white;">🛒</div><div class="app-name">App Store</div></div>
@@ -143,9 +161,9 @@
       <div class="app-container" onclick="openApp('terminal.html', 'Terminal', '💻')"><div class="app-icon" style="background:#111; color:#0f0;">💻</div><div class="app-name">Terminal</div></div>
       <div class="app-container" onclick="openApp('settings.html', 'Settings', '⚙️')"><div class="app-icon" style="background: #8e8e93; color: white;">⚙️</div><div class="app-name">Settings</div></div>
 
-      <div class="app-container hidden-app" id="app-space" onclick="openApp('space.html', 'Space Shooter', '🚀')"><div class="app-icon" style="background: #000; color: white;">🚀</div><div class="app-name">Space</div></div>
+      <div class="app-container hidden-app" id="app-space" onclick="openApp('space.html', 'Space', '🚀')"><div class="app-icon" style="background: #000; color: white;">🚀</div><div class="app-name">Space</div></div>
       <div class="app-container hidden-app" id="app-breakout" onclick="openApp('breakout.html', 'Breakout', '🧱')"><div class="app-icon" style="background: #0a84ff; color: white;">🧱</div><div class="app-name">Breakout</div></div>
-      <div class="app-container hidden-app" id="app-pixel" onclick="openApp('pixel.html', 'Pixel Studio', '👾')"><div class="app-icon" style="background: #af52de; color: white;">👾</div><div class="app-name">Pixel Art</div></div>
+      <div class="app-container hidden-app" id="app-pixel" onclick="openApp('pixel.html', 'Pixel', '👾')"><div class="app-icon" style="background: #af52de; color: white;">👾</div><div class="app-name">Pixel</div></div>
       <div class="app-container hidden-app" id="app-typing" onclick="openApp('typing.html', 'Typing', '⌨️')"><div class="app-icon" style="background: #2c3e50; color: white;">⌨️</div><div class="app-name">Typing</div></div>
       <div class="app-container hidden-app" id="app-memory" onclick="openApp('memory.html', 'Memory', '🃏')"><div class="app-icon" style="background:#2c3e50; color:white;">🃏</div><div class="app-name">Memory</div></div>
       <div class="app-container hidden-app" id="app-paint" onclick="openApp('paint.html', 'Paint', '🎨')"><div class="app-icon" style="background: #ffcc00;">🎨</div><div class="app-name">Paint</div></div>
@@ -166,7 +184,7 @@
   <script>
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
     
-    // Web Audio API: System Sound Effects
+    // Web Audio API
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
     function playSound(type) {
@@ -188,7 +206,6 @@
       }
     }
 
-    // Load Wallpapers (Handles Custom Photos!)
     const homeW = localStorage.getItem('homeWallpaper') || "linear-gradient(to bottom right, #ff7e5f, #feb47b)";
     const lockW = localStorage.getItem('lockWallpaper') || "linear-gradient(to bottom right, #ff7e5f, #feb47b)";
     document.getElementById('home-screen').style.backgroundImage = homeW.includes('url') ? homeW : 'none';
@@ -196,13 +213,12 @@
     document.getElementById('lock-screen').style.backgroundImage = lockW.includes('url') ? lockW : 'none';
     document.getElementById('lock-screen').style.background = lockW.includes('url') ? lockW : lockW;
 
-    // Unhide Store Apps
     ['paint','snake','piano','videotube','recorder','flappy','tictactoe','2048','memory','typing','space','breakout','pixel'].forEach(a => { 
       if(localStorage.getItem('own_'+a) === 'true') { let el = document.getElementById('app-'+a); if(el) el.classList.remove('hidden-app'); } 
     });
 
-    function toggleNotifications() { document.getElementById('notification-center').classList.toggle('open'); }
-    function toggleControlCenter() { document.getElementById('control-center').classList.toggle('open'); }
+    function toggleNotifications() { document.getElementById('notification-center').classList.toggle('open'); playSound('tick'); }
+    function toggleControlCenter() { document.getElementById('control-center').classList.toggle('open'); playSound('tick'); }
     function changeBrightness(val) { document.getElementById('brightness-overlay').style.opacity = (80 - val) / 100; }
 
     let battery = 100;
@@ -218,6 +234,7 @@
     let recentApps = [];
     function openAppSwitcher() {
       if(!recentApps.length) return;
+      playSound('lock');
       const sw = document.getElementById('app-switcher'); sw.innerHTML = '';
       recentApps.forEach((app, i) => {
         let card = document.createElement('div'); card.className = 'switcher-card';
@@ -226,7 +243,7 @@
       });
       sw.style.display = 'flex'; document.getElementById('app-window').classList.remove('open');
     }
-    function closeFromSwitcher(i, e) { e.stopPropagation(); recentApps.splice(i, 1); openAppSwitcher(); if(!recentApps.length) document.getElementById('app-switcher').style.display='none'; }
+    function closeFromSwitcher(i, e) { e.stopPropagation(); recentApps.splice(i, 1); playSound('tick'); openAppSwitcher(); if(!recentApps.length) document.getElementById('app-switcher').style.display='none'; }
 
     function powerOn() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -254,12 +271,22 @@
       if (entered.length === 4) setTimeout(checkPass, 200); 
     }
     function updateDots() { for (let i=1; i<=4; i++) document.getElementById('dot-'+i).classList.toggle('filled', i <= entered.length); }
+    
+    // UPGRADED SMOOTH UNLOCK ANIMATION
     function checkPass() {
       if (entered === PASS) {
         playSound('lock');
-        document.getElementById('lock-screen').style.transform = 'translateY(-100%)';
+        const lockScreen = document.getElementById('lock-screen');
+        lockScreen.style.transform = 'scale(1.15)'; // Zooms out smoothly
+        lockScreen.style.opacity = '0'; // Fades out smoothly
+        
         setTimeout(() => document.getElementById('home-screen').classList.add('unlocked'), 100);
-        setTimeout(() => { document.getElementById('lock-screen').style.display = 'none'; document.getElementById('home-screen').style.display = 'block'; }, 600);
+        setTimeout(() => { 
+          lockScreen.style.display = 'none'; 
+          document.getElementById('home-screen').style.display = 'block'; 
+          // Reset for next lock
+          lockScreen.style.transform = ''; lockScreen.style.opacity = '1'; entered = ""; updateDots();
+        }, 500);
       } else { entered = ""; updateDots(); alert("Wrong Passcode!"); }
     }
 
@@ -279,12 +306,21 @@
       app.addEventListener('pointermove', () => clearTimeout(pressTimer));
     });
 
+    // SPRING PHYSICS APP LAUNCH
     function openApp(url, name, icon) {
+      playSound('tick');
       if(name && !recentApps.some(a => a.name === name)) recentApps.push({url, name, icon});
       document.getElementById('app-switcher').style.display = 'none';
-      setTimeout(() => { document.getElementById('app-frame').src = url; document.getElementById('app-window').classList.add('open'); }, 150);
+      setTimeout(() => { 
+        document.getElementById('app-frame').src = url; 
+        document.getElementById('app-window').classList.add('open'); 
+      }, 150); // slight delay lets the squish animation finish
     }
-    function closeApp() { document.getElementById('app-window').classList.remove('open'); setTimeout(() => document.getElementById('app-frame').src = "", 500); }
+    function closeApp() { 
+      playSound('lock');
+      document.getElementById('app-window').classList.remove('open'); 
+      setTimeout(() => document.getElementById('app-frame').src = "", 500); 
+    }
     function installApp(id) { document.getElementById(id).classList.remove('hidden-app'); }
 
     function toggleFlash() {
