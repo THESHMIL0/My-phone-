@@ -3,80 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Music</title>
+  <title>Music Player</title>
   <style>
-    body { margin: 0; font-family: -apple-system, sans-serif; height: 100vh; background: #1c1c1e; color: white; display: flex; flex-direction: column; align-items: center; }
-    .header { width: 100%; padding: 50px 15px 10px; display: flex; justify-content: center; position: relative; font-weight: bold; }
-    .back-btn { position: absolute; left: 15px; color: #ff0844; cursor: pointer; }
+    body { margin: 0; background: #000; color: white; font-family: -apple-system, sans-serif; display: flex; flex-direction: column; height: 100vh; }
+    .header { padding: 45px 20px 10px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+    .btn { color: #ff0844; cursor: pointer; font-size: 16px; font-weight: 500;}
     
-    .album-art { width: 200px; height: 200px; background: linear-gradient(135deg, #ff0844, #ffb199); border-radius: 50%; margin: 60px 0 40px; border: 10px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; font-size: 80px; transition: transform 0.2s; }
-    .spin { animation: rotation 4s infinite linear; }
-    @keyframes rotation { from { transform: rotate(0deg); } to { transform: rotate(359deg); } }
+    .album-art { width: 260px; height: 260px; margin: 40px auto; background: linear-gradient(135deg, #ff0844, #ffb199); border-radius: 20px; box-shadow: 0 10px 30px rgba(255,8,68,0.4); display: flex; justify-content: center; align-items: center; font-size: 80px; transition: 0.3s; }
+    .album-art.playing { transform: scale(1.05); animation: pulse 2s infinite alternate; }
+    @keyframes pulse { to { box-shadow: 0 10px 50px rgba(255,8,68,0.8); } }
 
-    .title { font-size: 24px; font-weight: bold; margin-bottom: 5px; }
-    .artist { font-size: 16px; color: #8e8e93; }
+    .info { text-align: center; padding: 0 20px; }
+    .title { font-size: 24px; font-weight: bold; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .artist { font-size: 16px; color: #ffb199; }
 
-    .progress { width: 80%; height: 6px; background: #333; border-radius: 3px; margin: 40px 0 20px; position: relative; }
-    .progress-bar { width: 0%; height: 100%; background: #ff0844; border-radius: 3px; position: relative; transition: width 0.1s linear;}
-    .progress-bar::after { content: ''; position: absolute; right: -5px; top: -4px; width: 14px; height: 14px; background: white; border-radius: 50%; }
-
-    .controls { display: flex; gap: 40px; align-items: center; margin-top: 20px; font-size: 30px; }
-    .play-btn { width: 60px; height: 60px; background: white; color: black; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; transition: transform 0.1s; padding-left: 5px; box-sizing: border-box; }
+    .controls { display: flex; justify-content: center; align-items: center; gap: 30px; margin-top: 40px; }
+    .play-btn { width: 70px; height: 70px; border-radius: 50%; background: white; color: black; display: flex; justify-content: center; align-items: center; font-size: 28px; cursor: pointer; }
     .play-btn:active { transform: scale(0.9); }
+
+    .upload-btn { margin: 40px auto; background: #222; padding: 12px 24px; border-radius: 20px; color: white; font-weight: bold; text-align: center; width: max-content; cursor: pointer; }
+    input[type="file"] { display: none; }
   </style>
 </head>
 <body>
-  <div class="header"><div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div> Now Playing</div>
+  <div class="header"><span class="btn" onclick="window.parent.closeApp()">◀ Home</span><span>Now Playing</span><span style="width: 50px;"></span></div>
+
+  <div class="album-art" id="art">🎵</div>
   
-  <div class="album-art" id="record">🎵</div>
-  <div class="title">Tech House Vibes</div>
-  <div class="artist">DJ JavaScript</div>
-
-  <div class="progress"><div class="progress-bar" id="prog-bar"></div></div>
-
-  <div class="controls">
-    <div onclick="audio.currentTime = 0">⏮</div>
-    <div class="play-btn" id="play" onclick="togglePlay()">▶️</div>
-    <div>⏭</div>
+  <div class="info">
+    <div class="title" id="track-title">No Track Loaded</div>
+    <div class="artist" id="track-artist">Select a song to begin</div>
   </div>
 
-  <audio id="real-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+  <div class="controls">
+    <div class="play-btn" onclick="togglePlay()" id="play-btn">▶</div>
+  </div>
+
+  <label class="upload-btn">
+    📁 Load Local Audio File
+    <input type="file" accept="audio/*" id="audio-upload">
+  </label>
+
+  <audio id="player"></audio>
 
   <script>
-    const audio = document.getElementById('real-audio');
-    const playBtn = document.getElementById('play');
-    const record = document.getElementById('record');
-    const progBar = document.getElementById('prog-bar');
+    const player = document.getElementById('player'), art = document.getElementById('art'), playBtn = document.getElementById('play-btn');
     let isPlaying = false;
 
-    function togglePlay() {
-      if (isPlaying) {
-        audio.pause();
-        playBtn.innerHTML = '▶️';
-        playBtn.style.paddingLeft = '5px';
-        record.classList.remove('spin');
-      } else {
-        audio.play();
-        playBtn.innerHTML = '⏸';
-        playBtn.style.paddingLeft = '0'; 
-        record.classList.add('spin');
+    document.getElementById('audio-upload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if(file) {
+        document.getElementById('track-title').innerText = file.name.replace(/\.[^/.]+$/, "");
+        document.getElementById('track-artist').innerText = "Local Device";
+        player.src = URL.createObjectURL(file);
+        playAudio();
       }
-      isPlaying = !isPlaying;
+    });
+
+    function togglePlay() {
+      if(!player.src || player.src.endsWith("music.html")) return alert("Please load an audio file first!");
+      isPlaying ? pauseAudio() : playAudio();
     }
 
-    // Automatically move the progress bar as the song plays!
-    audio.ontimeupdate = function() {
-      const percentage = (audio.currentTime / audio.duration) * 100;
-      progBar.style.width = percentage + "%";
-    };
-
-    // When song ends, reset button
-    audio.onended = function() {
-      isPlaying = false;
-      playBtn.innerHTML = '▶️';
-      record.classList.remove('spin');
-      progBar.style.width = "0%";
-    };
+    function playAudio() { player.play(); isPlaying = true; playBtn.innerText = "⏸"; art.classList.add('playing'); }
+    function pauseAudio() { player.pause(); isPlaying = false; playBtn.innerText = "▶"; art.classList.remove('playing'); }
+    
+    player.onended = pauseAudio;
   </script>
 </body>
 </html>
