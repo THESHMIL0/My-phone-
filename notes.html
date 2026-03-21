@@ -1,86 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Notes</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #fffacd; /* A nice light yellow notepad color */
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* The top header */
-    .header {
-      padding-top: 50px;
-      padding-bottom: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      background-color: #ffeb85; /* Slightly darker yellow for the header */
-      font-size: 20px;
-      font-weight: bold;
-      border-bottom: 1px solid #e0ce67;
-    }
-
-    .back-btn {
-      position: absolute;
-      left: 15px;
-      color: #d97706; /* Orange-brown back button */
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    /* The typing area */
-    #note-area {
-      flex-grow: 1; /* Fills the rest of the screen */
-      width: 100%;
-      border: none;
-      padding: 20px;
-      padding-bottom: 40px; /* Room for the home bar */
-      font-size: 18px;
-      outline: none; /* Removes the blue glow when typing */
-      background-color: transparent;
-      resize: none; /* Stops the user from resizing the box */
-      box-sizing: border-box; /* Keeps padding inside the screen bounds */
-      line-height: 1.5; /* Makes text easier to read */
-    }
+    body { margin:0; font-family:-apple-system, sans-serif; background:#f2f2f7; display:flex; flex-direction:column; height:100vh;}
+    .header { padding:45px 15px 10px; display:flex; justify-content:space-between; align-items:center; background:#fff; border-bottom:1px solid #ccc; font-weight:bold; box-shadow: 0 1px 5px rgba(0,0,0,0.05);}
+    .btn { color:#ff9f0a; cursor:pointer; font-size: 16px; font-weight: 500;}
+    
+    .mic-btn { background:#ff9f0a; color:white; border:none; border-radius:20px; padding:8px 15px; font-weight:bold; cursor:pointer; transition:0.2s; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 10px rgba(255,159,10,0.3);}
+    .mic-btn.active { background:#ff3b30; box-shadow: 0 2px 15px rgba(255,59,48,0.5); animation:pulse 1s infinite alternate; }
+    @keyframes pulse { to { transform: scale(1.05); } }
+    
+    textarea { flex-grow:1; padding:20px; font-size:18px; border:none; outline:none; background:#fff; resize:none; line-height:1.6; color: #333;}
   </style>
 </head>
 <body>
-
   <div class="header">
-    <div class="back-btn" onclick="window.parent.closeApp()">◀ Back</div>
-    <span>My Notes 📝</span>
+    <span class="btn" onclick="window.parent.closeApp()">◀ Home</span>
+    <button class="mic-btn" id="micBtn" onclick="toggleDictation()">🎤 Dictate</button>
+    <span class="btn" onclick="save()">Save</span>
   </div>
-
-  <textarea id="note-area" placeholder="Start typing your notes here..."></textarea>
-
+  
+  <textarea id="editor" placeholder="Start typing, or tap Dictate to speak..."></textarea>
+  
   <script>
-    // --- JAVASCRIPT: The Memory Brain ---
+    const editor = document.getElementById('editor');
+    const micBtn = document.getElementById('micBtn');
+    let isRecording = false;
+    let recognition;
 
-    const noteArea = document.getElementById('note-area');
-
-    // 1. LOAD: When the app opens, look in the phone's memory
-    const savedNotes = localStorage.getItem('myPhoneNotes');
-    
-    // If we found saved notes, put them on the screen!
-    if (savedNotes) {
-      noteArea.value = savedNotes;
+    // Load saved note
+    editor.value = localStorage.getItem('os_notes_main') || "";
+    function save() { 
+      localStorage.setItem('os_notes_main', editor.value); 
+      alert("Note Saved!"); 
     }
 
-    // 2. SAVE: Every single time you type a letter, save it
-    noteArea.addEventListener('input', function() {
-      // localStorage is like a permanent sticky note inside your browser
-      localStorage.setItem('myPhoneNotes', noteArea.value);
-    });
-  </script>
+    // Initialize Web Speech API
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
 
+      recognition.onresult = function(event) {
+        let finalTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript + " ";
+        }
+        if(finalTranscript) editor.value += finalTranscript;
+      };
+      
+      recognition.onerror = function(e) { 
+        alert("Microphone error or permission denied."); 
+        if(isRecording) toggleDictation(); 
+      };
+    } else {
+      micBtn.style.display = 'none'; // Hide if browser doesn't support it
+    }
+
+    function toggleDictation() {
+      if(!recognition) return alert("Speech Recognition not supported on this browser.");
+      
+      if(isRecording) {
+        recognition.stop(); 
+        micBtn.classList.remove('active'); 
+        micBtn.innerText = "🎤 Dictate";
+      } else {
+        recognition.start(); 
+        micBtn.classList.add('active'); 
+        micBtn.innerText = "Listening...";
+      }
+      isRecording = !isRecording;
+    }
+  </script>
 </body>
 </html>
