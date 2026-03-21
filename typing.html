@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Test</title>
+  <style>
+    body { margin: 0; font-family: -apple-system, sans-serif; background: #2c3e50; color: white; display: flex; flex-direction: column; height: 100vh; }
+    .header { padding: 45px 15px 15px; display: flex; justify-content: space-between; font-weight: bold; background: rgba(0,0,0,0.2); }
+    .btn { color: #3498db; cursor: pointer; }
+    .container { padding: 30px; display: flex; flex-direction: column; align-items: center; text-align: center; flex-grow: 1; justify-content: center; }
+    .quote { font-size: 22px; line-height: 1.5; margin-bottom: 20px; color: #ecf0f1; }
+    .input-box { width: 100%; padding: 15px; font-size: 18px; border-radius: 10px; border: none; outline: none; margin-bottom: 20px; box-sizing: border-box;}
+    .stats { font-size: 28px; font-weight: bold; color: #f1c40f; }
+  </style>
+</head>
+<body>
+  <div class="header"><span class="btn" onclick="window.parent.closeApp()">◀ Quit</span><span class="btn" onclick="init()">Restart</span></div>
+  <div class="container">
+    <div class="quote" id="quote">The quick brown fox jumps over the lazy dog.</div>
+    <input type="text" id="input" class="input-box" placeholder="Start typing here..." oninput="check()">
+    <div class="stats" id="wpm">WPM: 0</div>
+  </div>
+  <script>
+    const quotes = ["The quick brown fox jumps over the lazy dog.", "Web development is fun and challenging.", "A journey of a thousand miles begins with a single step.", "To be or not to be, that is the question."];
+    let target = "", startTime = null, timer = null;
+    
+    function init() {
+      target = quotes[Math.floor(Math.random() * quotes.length)];
+      document.getElementById('quote').innerText = target;
+      document.getElementById('input').value = '';
+      document.getElementById('input').disabled = false;
+      document.getElementById('wpm').innerText = 'WPM: 0';
+      startTime = null; clearInterval(timer);
+    }
+    
+    function check() {
+      let val = document.getElementById('input').value;
+      if(!startTime) { startTime = Date.now(); timer = setInterval(updateWPM, 500); }
+      if(val === target) {
+        clearInterval(timer); updateWPM();
+        document.getElementById('input').disabled = true;
+        document.getElementById('wpm').innerText += " 🎉";
+      }
+    }
+    
+    function updateWPM() {
+      if(!startTime) return;
+      let words = document.getElementById('input').value.trim().split(' ').length;
+      let mins = (Date.now() - startTime) / 60000;
+      document.getElementById('wpm').innerText = 'WPM: ' + Math.max(0, Math.round(words / mins));
+    }
+    init();
+  </script>
+</body>
+</html>
